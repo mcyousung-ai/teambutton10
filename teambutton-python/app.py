@@ -18,7 +18,7 @@ app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = secrets.token_hex(32)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='gevent', ping_timeout=120, ping_interval=25, max_http_buffer_size=1024*1024, logger=False, engineio_logger=False)
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading', ping_timeout=120, ping_interval=25, max_http_buffer_size=1024*1024, logger=False, engineio_logger=False)
 
 # Throttle mechanism for high-frequency events
 _last_emit = {}
@@ -1218,14 +1218,12 @@ def serve_sound(filename):
 # Main
 # ============================================
 if __name__ == '__main__':
-    from gevent import monkey
-    monkey.patch_all()
     init_db()
     port = int(os.environ.get('PORT', 8080))
     print("=" * 50)
     print("🔥 THE TEAM COMPANY 팀빌딩 플랫폼")
     print(f"🌐 http://0.0.0.0:{port}")
     print(f"📁 Database: {DATABASE}")
-    print(f"⚡ Async: gevent (1000+ connections)")
+    print(f"⚡ v2.0.0 · threading mode")
     print("=" * 50)
     socketio.run(app, host='0.0.0.0', port=port, debug=False, allow_unsafe_werkzeug=True)

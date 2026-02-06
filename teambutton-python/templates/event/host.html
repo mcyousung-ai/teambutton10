@@ -3,490 +3,431 @@
 {% block title %}호스트 - {{ event.title }}{% endblock %}
 {% block extra_css %}
 <style>
-body{background:var(--bg);overflow:hidden}
+body{background:#f8fafc;overflow:hidden}
 .host-wrap{display:flex;height:100vh}
-/* Left Sidebar - Feature buttons */
-.host-left{width:72px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding:8px 0}
-.host-left .logo{padding:10px;text-align:center;border-bottom:1px solid var(--border);margin-bottom:4px}
-.host-left .logo img{width:32px;height:32px;border-radius:8px}
-.feat-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;cursor:pointer;transition:all .2s;border:none;background:none;width:100%;gap:2px;border-left:3px solid transparent}
-.feat-btn:hover{background:var(--indigo-50)}
-.feat-btn.active{background:var(--indigo-50);border-left-color:var(--point-500)}
-.feat-btn i{font-size:18px;color:var(--text2)}
-.feat-btn.active i{color:var(--point-500)}
-.feat-btn span{font-size:9px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60px}
-.feat-btn.active span{color:var(--point-600);font-weight:600}
-.feat-sep{height:1px;background:var(--border);margin:4px 8px}
-/* Main Content */
+.host-left{width:72px;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding:8px 0}
+.host-left .logo{padding:10px;text-align:center;border-bottom:1px solid #e2e8f0;margin-bottom:4px}
+.feat-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;cursor:pointer;transition:all .15s;border:none;background:none;width:100%;gap:2px;border-left:3px solid transparent}
+.feat-btn:hover{background:#eef2ff}
+.feat-btn.active{background:#eef2ff;border-left-color:#5669FF}
+.feat-btn i{font-size:18px;color:#64748b}
+.feat-btn.active i{color:#5669FF}
+.feat-btn span{font-size:9px;color:#94a3b8;white-space:nowrap}
+.feat-btn.active span{color:#495BE0;font-weight:600}
+.feat-sep{height:1px;background:#e2e8f0;margin:4px 8px}
 .host-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-/* Top bar */
-.host-top{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.host-top .info{display:flex;align-items:center;gap:10px}
-.host-top .info h3{font-size:15px;font-weight:700}
-.host-top .code{font-size:20px;font-weight:800;color:var(--point-500);letter-spacing:1px}
-.host-top .actions{display:flex;align-items:center;gap:6px}
-/* Progress bar */
-.host-progress{height:4px;background:var(--bg3);flex-shrink:0}
-.host-progress .fill{height:100%;background:linear-gradient(90deg,var(--point-400),var(--point-600));transition:width .5s}
-/* Feature Content */
+.host-top{background:#fff;border-bottom:1px solid #e2e8f0;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.host-top h3{font-size:15px;font-weight:700}
 .host-content{flex:1;overflow-y:auto;padding:20px}
-.feature-content{max-width:900px;margin:0 auto}
-/* Right sidebar - Responses */
-.host-right{width:300px;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
-.host-right .tabs{flex-shrink:0}
+.feat-content{max-width:900px;margin:0 auto}
+.host-right{width:300px;background:#fff;border-left:1px solid #e2e8f0;display:flex;flex-direction:column;flex-shrink:0}
 .resp-list{flex:1;overflow-y:auto;padding:8px}
-.resp-item{padding:8px 10px;border-bottom:1px solid var(--bg3);font-size:13px;display:flex;justify-content:space-between;align-items:center;animation:msgIn .2s ease}
-.resp-item .name{font-weight:600;color:var(--text)}
-.resp-item .answer{color:var(--text2);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.resp-count{padding:8px 12px;background:var(--bg3);font-size:12px;font-weight:600;color:var(--text2);text-align:center;border-bottom:1px solid var(--border)}
-/* Game form styles */
-.game-form{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow-card)}
+.resp-item{padding:8px 10px;border-bottom:1px solid #f1f5f9;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.resp-count{padding:8px 12px;background:#f1f5f9;font-size:12px;font-weight:600;color:#64748b;text-align:center;border-bottom:1px solid #e2e8f0}
+.game-form{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,.06)}
 .game-form h3{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.game-form .subtitle{font-size:12px;color:var(--text3);margin-bottom:16px}
-.game-actions{display:flex;gap:8px;margin-top:16px}
-/* Status header */
-.status-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:16px}
-.status-header .left{display:flex;align-items:center;gap:8px}
-.status-header .right{display:flex;gap:6px}
-/* Participant table in host */
-.p-table{width:100%;font-size:12px}
-.p-table th{padding:8px 10px;background:var(--bg3);font-weight:600;color:var(--text2);text-align:left;border-bottom:1px solid var(--border)}
-.p-table td{padding:8px 10px;border-bottom:1px solid var(--bg3)}
-.p-table tr:hover{background:var(--indigo-50)}
-/* Score input */
-.score-input{width:60px;padding:4px 6px;font-size:12px;text-align:center;border-radius:8px}
-/* Chat in host */
-.host-chat{flex:1;display:flex;flex-direction:column}
-.host-chat .msgs{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:4px}
-/* Leaderboard in response */
-.lb-item{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-bottom:1px solid var(--bg3);font-size:12px}
-.lb-item .rank{width:24px;font-weight:700;color:var(--text3)}
-.lb-item .clicks{font-weight:800;color:var(--point-500);font-variant-numeric:tabular-nums}
-/* Code number display */
-.cn-display{font-size:80px;font-weight:900;text-align:center;color:var(--point-500);margin:16px 0;line-height:1}
-/* Lottery result */
-.lottery-result{text-align:center;padding:24px;font-size:28px;font-weight:800;color:var(--point-600)}
-/* Mobile */
-@media(max-width:900px){
-.host-right{display:none}
-.host-left{width:56px}
-.feat-btn span{display:none}
-.feat-btn{padding:10px 4px}
-}
+.status-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.ctrl-btns{display:flex;flex-wrap:wrap;gap:6px}
+.p-table{width:100%;font-size:12px;border-collapse:collapse}
+.p-table th{padding:8px 10px;background:#f8fafc;font-weight:600;color:#64748b;text-align:left;border-bottom:1px solid #e2e8f0}
+.p-table td{padding:8px 10px;border-bottom:1px solid #f1f5f9}
+.p-table tr:hover{background:#eef2ff}
+.score-input{width:65px;padding:4px 6px;font-size:12px;text-align:center;border-radius:8px}
+.cn-display{font-size:80px;font-weight:900;text-align:center;color:#5669FF;margin:16px 0;line-height:1}
+.qr-box{text-align:center;margin-top:12px;padding:16px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0}
+@media(max-width:900px){.host-right{display:none}.host-left{width:56px}.feat-btn span{display:none}}
 </style>
 {% endblock %}
 {% block content %}
 <div class="host-wrap">
-<!-- Left Sidebar: Feature Buttons -->
 <div class="host-left">
-<div class="logo"><img src="/static/images/logo.png" alt="TB" onerror="this.textContent='TB'"></div>
-<button class="feat-btn active" data-feat="preparing" onclick="switchFeat(this,'preparing')"><i class="ri-home-4-line"></i><span>준비</span></button>
-<button class="feat-btn" data-feat="management" onclick="switchFeat(this,'management')"><i class="ri-group-line"></i><span>팀/개인</span></button>
-<button class="feat-btn" data-feat="score" onclick="switchFeat(this,'score')"><i class="ri-trophy-line"></i><span>점수</span></button>
-<button class="feat-btn" data-feat="chat" onclick="switchFeat(this,'chat')"><i class="ri-chat-3-line"></i><span>채팅</span></button>
+<div class="logo"><strong style="color:#5669FF;font-size:14px">TB</strong></div>
+<button class="feat-btn active" data-f="preparing" onclick="sf(this,'preparing')"><i class="ri-home-4-line"></i><span>준비</span></button>
+<button class="feat-btn" data-f="management" onclick="sf(this,'management')"><i class="ri-group-line"></i><span>팀/개인</span></button>
+<button class="feat-btn" data-f="score" onclick="sf(this,'score')"><i class="ri-trophy-line"></i><span>점수</span></button>
+<button class="feat-btn" data-f="chat" onclick="sf(this,'chat')"><i class="ri-chat-3-line"></i><span>채팅</span></button>
 <div class="feat-sep"></div>
-<button class="feat-btn" data-feat="quiz_multiple" onclick="switchFeat(this,'quiz_multiple')"><i class="ri-checkbox-multiple-line"></i><span>객관식</span></button>
-<button class="feat-btn" data-feat="quiz_subjective" onclick="switchFeat(this,'quiz_subjective')"><i class="ri-pencil-line"></i><span>주관식</span></button>
-<button class="feat-btn" data-feat="quiz_order" onclick="switchFeat(this,'quiz_order')"><i class="ri-sort-number-asc"></i><span>순서</span></button>
-<button class="feat-btn" data-feat="buzzer" onclick="switchFeat(this,'buzzer')"><i class="ri-alarm-warning-line"></i><span>부저</span></button>
-<button class="feat-btn" data-feat="buzzer_count" onclick="switchFeat(this,'buzzer_count')"><i class="ri-speed-line"></i><span>부저카운트</span></button>
-<button class="feat-btn" data-feat="code_number" onclick="switchFeat(this,'code_number')"><i class="ri-grid-line"></i><span>코드넘버</span></button>
-<button class="feat-btn" data-feat="bingo" onclick="switchFeat(this,'bingo')"><i class="ri-layout-grid-line"></i><span>빙고</span></button>
+<button class="feat-btn" data-f="quiz_multiple" onclick="sf(this,'quiz_multiple')"><i class="ri-checkbox-multiple-line"></i><span>객관식</span></button>
+<button class="feat-btn" data-f="quiz_subjective" onclick="sf(this,'quiz_subjective')"><i class="ri-pencil-line"></i><span>주관식</span></button>
+<button class="feat-btn" data-f="quiz_order" onclick="sf(this,'quiz_order')"><i class="ri-sort-number-asc"></i><span>순서</span></button>
+<button class="feat-btn" data-f="buzzer" onclick="sf(this,'buzzer')"><i class="ri-alarm-warning-line"></i><span>부저</span></button>
+<button class="feat-btn" data-f="buzzer_count" onclick="sf(this,'buzzer_count')"><i class="ri-speed-line"></i><span>부저카운트</span></button>
+<button class="feat-btn" data-f="code_number" onclick="sf(this,'code_number')"><i class="ri-grid-line"></i><span>코드넘버</span></button>
+<button class="feat-btn" data-f="bingo" onclick="sf(this,'bingo')"><i class="ri-layout-grid-line"></i><span>빙고</span></button>
 <div class="feat-sep"></div>
-<button class="feat-btn" data-feat="timer" onclick="switchFeat(this,'timer')"><i class="ri-timer-line"></i><span>타이머</span></button>
-<button class="feat-btn" data-feat="lottery" onclick="switchFeat(this,'lottery')"><i class="ri-gift-line"></i><span>추첨</span></button>
-<button class="feat-btn" data-feat="like" onclick="switchFeat(this,'like')"><i class="ri-heart-line"></i><span>좋아요</span></button>
+<button class="feat-btn" data-f="timer" onclick="sf(this,'timer')"><i class="ri-timer-line"></i><span>타이머</span></button>
+<button class="feat-btn" data-f="lottery" onclick="sf(this,'lottery')"><i class="ri-gift-line"></i><span>추첨</span></button>
+<button class="feat-btn" data-f="like" onclick="sf(this,'like')"><i class="ri-heart-line"></i><span>좋아요</span></button>
 <div class="feat-sep"></div>
-<button class="feat-btn" data-feat="settings" onclick="switchFeat(this,'settings')"><i class="ri-settings-3-line"></i><span>설정</span></button>
+<button class="feat-btn" data-f="settings" onclick="sf(this,'settings')"><i class="ri-settings-3-line"></i><span>설정</span></button>
 </div>
-
-<!-- Main Area -->
 <div class="host-main">
 <div class="host-top">
-<div class="info">
+<div style="display:flex;align-items:center;gap:10px">
 <h3>{{ event.title }}</h3>
-<span class="badge badge-gray badge-dot" id="evBadge">{{ event.status }}</span>
-<span style="font-size:12px;color:var(--text3)"><i class="ri-group-line"></i> <span id="pCnt">{{ participants|length }}</span>명</span>
+<span class="badge badge-gray" id="evBadge">{{ event.status }}</span>
+<span style="font-size:12px;color:#94a3b8"><i class="ri-group-line"></i> <span id="pCnt">0</span>명</span>
 </div>
-<div class="flex items-center gap-3">
-<span class="code">{{ event.code }}</span>
-<div class="actions">
-<button class="btn btn-sm btn-success" onclick="startEvent()"><i class="ri-play-fill"></i> 시작</button>
-<button class="btn btn-sm btn-danger" onclick="endEvent()"><i class="ri-stop-fill"></i> 종료</button>
-</div>
+<div style="display:flex;align-items:center;gap:12px">
+<span style="font-size:20px;font-weight:900;color:#5669FF;letter-spacing:1px">{{ event.code }}</span>
+<button class="btn btn-sm btn-success" id="btnStart"><i class="ri-play-fill"></i> 시작</button>
+<button class="btn btn-sm btn-danger" id="btnEnd"><i class="ri-stop-fill"></i> 종료</button>
 </div>
 </div>
-<div class="host-progress"><div class="fill" id="progFill" style="width:0%"></div></div>
-<div class="host-content"><div class="feature-content" id="featureArea"></div></div>
+<div class="host-content"><div class="feat-content" id="FA"></div></div>
 </div>
-
-<!-- Right Sidebar: Responses + Chat -->
 <div class="host-right">
-<div class="tabs"><div class="tab active" onclick="switchRightTab(this,'resp')">응답</div><div class="tab" onclick="switchRightTab(this,'hchat')">채팅</div></div>
-<div id="rtResp" style="flex:1;display:flex;flex-direction:column">
-<div class="resp-count" id="respCount">응답 0명</div>
-<div class="resp-list" id="respList"></div>
-</div>
-<div id="rtChat" class="host-chat" style="display:none">
-<div class="msgs" id="hChatMsgs"></div>
-<div class="chat-input"><input type="text" id="hChatIn" placeholder="메시지..." onkeypress="if(event.key==='Enter')hSendChat()"><button class="btn btn-sm btn-primary" onclick="hSendChat()">전송</button></div>
+<div class="tabs"><div class="tab active" id="rtTabResp">응답</div><div class="tab" id="rtTabChat">채팅</div></div>
+<div id="rtResp" style="flex:1;display:flex;flex-direction:column"><div class="resp-count" id="respCnt">응답 0명</div><div class="resp-list" id="RL"></div></div>
+<div id="rtChat" style="display:none;flex:1;flex-direction:column"><div style="flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:4px" id="HCM"></div>
+<div class="chat-input"><input type="text" id="hci" placeholder="메시지..." style="flex:1"><button class="btn btn-sm btn-primary" id="hcSend">전송</button></div></div>
 </div>
 </div>
-</div>
-
 <script>
-const E={{ event.id }},TEAMS={{ teams|tojson }};
-let P={{ participants|tojson }},GID=null,GT=null,curFeat='preparing',responses=[];
-const S=io();S.emit('host:join',{eventId:E});
+var EID = {{ event.id }};
+var ECODE = '{{ event.code }}';
+var ETEAMS = {{ teams|tojson|safe }};
+var EP = {{ participants|tojson|safe }};
+var EURL = location.origin + '/join/' + ECODE;
+</script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+(function(){
+var S = io();
+var GID = null, GT = null, curFeat = 'preparing', responses = [];
+var optCount = 4;
 
-// === Socket Listeners ===
-S.on('event:started',()=>{$('evBadge').textContent='진행중';$('evBadge').className='badge badge-success badge-dot';showToast('이벤트 시작!')});
-S.on('event:ended',()=>{$('evBadge').textContent='종료';$('evBadge').className='badge badge-danger badge-dot'});
-S.on('participants:updated',d=>{P=d.participants;$('pCnt').textContent=P.length;if(curFeat==='management'||curFeat==='score')renderFeat()});
-S.on('teams:updated',d=>{});
-S.on('chat:message',d=>addHChat(d));
-S.on('game:prepared',d=>{GID=d.gameId;showToast(GT+' 게임 준비 완료');renderFeat()});
-S.on('timer:prepared',d=>{GID=d.timerId;showToast('타이머 준비 완료');renderFeat()});
-S.on('game:started',d=>{showToast('게임 시작!');responses=[]});
-S.on('game:ended',d=>{showToast('게임 종료')});
-S.on('game:response',d=>{addResponse(d)});
-S.on('game:buzzer_count_click',d=>{updateBCResponse(d)});
-S.on('game:buzzer_count_winner',d=>{showToast('🏆 우승: '+d.winner?.name)});
-S.on('game:code_number_next',d=>{if(curFeat==='code_number'){const el=$('cnNum');if(el)el.textContent=d.number===0?'🃏':d.number}});
-S.on('game:lottery_result',d=>{const el=$('lotteryRes');if(el)el.innerHTML='🎉 '+d.winners.join(', ')+'<div style="font-size:14px;color:var(--text3);margin-top:8px">전체 당첨: '+d.allWinners.join(', ')+'</div>'});
-S.on('timer:tick',d=>{const el=$('timerDisp');if(el){const m=Math.floor(d.remaining/60),s=d.remaining%60;el.textContent=m+':'+String(s).padStart(2,'0');if(d.remaining<=10)el.style.color='var(--danger)'}});
-S.on('timer:ended',()=>showToast('⏱️ 타이머 종료!'));
-S.on('game:answers_revealed',d=>{renderRevealedAnswers(d)});
-S.on('game:points_awarded',()=>showToast('💰 점수 지급 완료!'));
-S.on('event:like_updated',d=>{const el=$('likeCount');if(el)el.textContent=d.likes||0});
+S.emit('host:join', {eventId: EID});
 
-function $(id){return document.getElementById(id)}
+function $(id){ return document.getElementById(id); }
 
-// === Feature switching ===
-function switchFeat(el,feat){
-document.querySelectorAll('.feat-btn').forEach(b=>b.classList.remove('active'));
-el.classList.add('active');curFeat=feat;responses=[];$('respList').innerHTML='';$('respCount').textContent='응답 0명';
-renderFeat();
-}
-function switchRightTab(el,tab){
-document.querySelectorAll('.host-right .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
-$('rtResp').style.display=tab==='resp'?'flex':'none';$('rtChat').style.display=tab==='hchat'?'flex':'none';
-}
+// Right tab
+$('rtTabResp').onclick = function(){ this.classList.add('active'); $('rtTabChat').classList.remove('active'); $('rtResp').style.display='flex'; $('rtChat').style.display='none'; };
+$('rtTabChat').onclick = function(){ this.classList.add('active'); $('rtTabResp').classList.remove('active'); $('rtResp').style.display='none'; $('rtChat').style.display='flex'; };
 
-// === Render Feature ===
-function renderFeat(){
-const a=$('featureArea');
-switch(curFeat){
-case 'preparing':renderPreparing(a);break;
-case 'management':renderManagement(a);break;
-case 'score':renderScore(a);break;
-case 'chat':renderChat(a);break;
-case 'quiz_multiple':renderQuizMultiple(a);break;
-case 'quiz_subjective':renderQuizSubjective(a);break;
-case 'quiz_order':renderQuizOrder(a);break;
-case 'buzzer':renderBuzzer(a);break;
-case 'buzzer_count':renderBuzzerCount(a);break;
-case 'code_number':renderCodeNumber(a);break;
-case 'bingo':renderBingo(a);break;
-case 'timer':renderTimerFeat(a);break;
-case 'lottery':renderLottery(a);break;
-case 'like':renderLike(a);break;
-case 'settings':renderSettings(a);break;
-default:a.innerHTML='<div class="empty"><p>기능을 선택하세요</p></div>';
-}
-}
+// Events
+$('btnStart').onclick = function(){ S.emit('host:start_event', {eventId: EID}); };
+$('btnEnd').onclick = function(){ if(confirm('이벤트를 종료하시겠습니까?')) S.emit('host:end_event', {eventId: EID}); };
+$('hcSend').onclick = function(){ var v=$('hci').value; if(!v.trim())return; S.emit('chat:send',{eventId:EID,message:v,senderName:'호스트',type:'all',author:'host'}); $('hci').value=''; };
+$('hci').onkeypress = function(e){ if(e.key==='Enter') $('hcSend').click(); };
 
-// Preparing
-function renderPreparing(a){
-a.innerHTML=`<div class="game-form"><h3>📋 이벤트 준비</h3>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-<div class="card-sm" style="background:var(--indigo-50);border:1px solid var(--indigo-200);border-radius:12px;padding:16px;text-align:center">
-<div style="font-size:32px;font-weight:900;color:var(--indigo-600)">${P.length}</div><div style="font-size:12px;color:var(--indigo-600);font-weight:600">참가자</div></div>
-<div class="card-sm" style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:16px;text-align:center">
-<div style="font-size:32px;font-weight:900;color:#16A34A">${TEAMS.length}</div><div style="font-size:12px;color:#16A34A;font-weight:600">팀</div></div>
-</div>
-<p style="font-size:13px;color:var(--text2)">참가 코드: <strong style="font-size:18px;color:var(--point-500)">{{ event.code }}</strong></p>
-<p style="font-size:13px;color:var(--text3);margin-top:8px">참가자가 입장한 후, 좌측 메뉴에서 게임을 선택하여 시작하세요.</p>
-<div class="game-actions"><button class="btn btn-primary" onclick="setDisplay('대기')"><i class="ri-tv-line"></i> 대기화면</button><button class="btn btn-outline" onclick="window.open('/event/monitor/'+E)"><i class="ri-external-link-line"></i> 모니터</button></div>
-</div>`;
-}
+// Socket listeners
+S.on('event:started', function(){ $('evBadge').textContent='진행중'; $('evBadge').className='badge badge-success'; showToast('이벤트 시작!'); });
+S.on('event:ended', function(){ $('evBadge').textContent='종료'; $('evBadge').className='badge badge-danger'; });
+S.on('participants:updated', function(d){ EP=d.participants; $('pCnt').textContent=EP.length; if(curFeat==='management'||curFeat==='score') rf(); });
+S.on('chat:message', function(d){ addHChat(d); });
+S.on('game:prepared', function(d){ GID=d.gameId; showToast(GT+' 게임 준비 완료'); rf(); });
+S.on('timer:prepared', function(d){ GID=d.timerId; showToast('타이머 준비 완료'); rf(); });
+S.on('game:started', function(){ showToast('게임 시작!'); responses=[]; });
+S.on('game:ended', function(){ showToast('게임 종료'); });
+S.on('game:response', function(d){ addResp(d); });
+S.on('game:buzzer_count_click', function(d){ updateBC(d); });
+S.on('game:buzzer_count_winner', function(d){ showToast('🏆 우승: '+(d.winner?d.winner.name:'')); });
+S.on('game:code_number_next', function(d){ var el=$('cnNum'); if(el) el.textContent=(d.number===0?'🃏':d.number); });
+S.on('game:lottery_result', function(d){ var el=$('lotRes'); if(el) el.innerHTML='🎉 '+d.winners.join(', '); });
+S.on('timer:tick', function(d){ var el=$('tDisp'); if(el){var m=Math.floor(d.remaining/60),s=d.remaining%60; el.textContent=m+':'+String(s).padStart(2,'0'); if(d.remaining<=10) el.style.color='#EF4444';} });
+S.on('timer:ended', function(){ showToast('⏱️ 타이머 종료!'); });
+S.on('game:answers_revealed', function(d){ renderRevealed(d); });
+S.on('game:points_awarded', function(){ showToast('💰 점수 지급 완료!'); });
+S.on('event:like_updated', function(d){ var el=$('likeCnt'); if(el) el.textContent=d.likes||0; });
 
-// Management
-function renderManagement(a){
-let html=`<div class="game-form"><h3><i class="ri-group-line"></i> 팀/개인 관리</h3>
-<div class="tabs mb-4"><div class="tab active" onclick="switchMgmtTab(this,'pt')">참가자 (${P.length})</div><div class="tab" onclick="switchMgmtTab(this,'tm')">팀 (${TEAMS.length})</div></div>
-<div id="mgmtPt"><table class="p-table"><thead><tr><th>이름</th><th>팀</th><th>점수</th><th>상태</th><th></th></tr></thead><tbody>`;
-P.forEach(p=>{
-const team=TEAMS.find(t=>t.id==p.team_id);
-html+=`<tr><td style="font-weight:600">${p.name}</td><td>${team?.name||'-'}</td><td style="font-weight:700;color:var(--point-500)">${p.score}</td><td><span class="badge badge-${p.status==='참가'?'success':'gray'}">${p.status||'참가'}</span></td><td><button class="btn btn-ghost btn-sm" onclick="kickParticipant(${p.id})"><i class="ri-close-line"></i></button></td></tr>`;
-});
-html+=`</tbody></table></div><div id="mgmtTm" class="hidden">`;
-TEAMS.forEach(t=>{
-const members=P.filter(p=>p.team_id==t.id);
-html+=`<div class="card-sm mb-3"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${t.name}</strong> <span class="text-sm text-muted">(${members.length}명)</span></div><span style="font-weight:800;color:var(--point-500)">${t.score}점</span></div>
-<div style="margin-top:8px;font-size:12px;color:var(--text3)">${members.map(m=>m.name).join(', ')||'멤버 없음'}</div></div>`;
-});
-html+=`</div></div>`;
-a.innerHTML=html;
-}
-function switchMgmtTab(el,tab){
-document.querySelectorAll('.game-form .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
-$('mgmtPt').classList.toggle('hidden',tab!=='pt');$('mgmtTm').classList.toggle('hidden',tab!=='tm');
-}
-function kickParticipant(pid){if(confirm('퇴장시키겠습니까?'))S.emit('host:manage_participant',{eventId:E,action:'kick',participantId:pid})}
+// Feature switch
+window.sf = function(el, feat){
+  document.querySelectorAll('.feat-btn').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active'); curFeat=feat; responses=[]; $('RL').innerHTML=''; $('respCnt').textContent='응답 0명';
+  rf();
+};
 
-// Score
-function renderScore(a){
-let html=`<div class="game-form"><h3><i class="ri-trophy-line"></i> 점수 관리</h3>
-<div class="flex gap-2 mb-4"><button class="btn btn-sm btn-outline" onclick="setDisplay('개인 점수')">개인 점수 표시</button><button class="btn btn-sm btn-outline" onclick="setDisplay('팀 점수')">팀 점수 표시</button></div>`;
-if(TEAMS.length>0){
-html+=`<h4 style="font-size:14px;font-weight:600;margin-bottom:8px">팀 점수</h4><table class="p-table mb-4"><thead><tr><th>팀</th><th>점수</th><th>변경</th></tr></thead><tbody>`;
-TEAMS.forEach(t=>{html+=`<tr><td style="font-weight:600">${t.name}</td><td style="font-weight:700;color:var(--point-500)">${t.score}</td><td><div class="flex gap-2"><input type="number" class="score-input" id="ts${t.id}" value="0" min="-999" max="999"><button class="btn btn-sm btn-primary" onclick="updateTeamScore(${t.id})">적용</button></div></td></tr>`});
-html+=`</tbody></table>`;
-}
-html+=`<h4 style="font-size:14px;font-weight:600;margin-bottom:8px">개인 점수</h4><table class="p-table"><thead><tr><th>#</th><th>이름</th><th>팀</th><th>점수</th><th>변경</th></tr></thead><tbody>`;
-[...P].sort((a,b)=>b.score-a.score).forEach((p,i)=>{
-const team=TEAMS.find(t=>t.id==p.team_id);
-html+=`<tr><td>${i<3?['🥇','🥈','🥉'][i]:(i+1)}</td><td style="font-weight:600">${p.name}</td><td>${team?.name||'-'}</td><td style="font-weight:700;color:var(--point-500)">${p.score}</td><td><div class="flex gap-2"><input type="number" class="score-input" id="ps${p.id}" value="0" min="-999" max="999"><button class="btn btn-sm btn-primary" onclick="updatePScore(${p.id})">적용</button></div></td></tr>`;
-});
-html+=`</tbody></table></div>`;
-a.innerHTML=html;
-}
-function updateTeamScore(tid){const v=parseInt($('ts'+tid)?.value)||0;S.emit('host:update_team_score',{eventId:E,teamId:tid,score:v})}
-function updatePScore(pid){const v=parseInt($('ps'+pid)?.value)||0;S.emit('host:update_participant_score',{eventId:E,participantId:pid,score:v})}
-
-// Chat
-function renderChat(a){
-a.innerHTML=`<div class="game-form"><h3><i class="ri-chat-3-line"></i> 채팅 관리</h3>
-<div class="flex gap-2 mb-4"><button class="btn btn-sm btn-outline" onclick="setDisplay('채팅')">채팅 화면 표시</button>
-<button class="btn btn-sm btn-danger" onclick="clearChat()"><i class="ri-delete-bin-line"></i> 채팅 초기화</button></div>
-<label class="flex items-center gap-2" style="cursor:pointer;font-size:13px"><input type="checkbox" id="chatToggle" onchange="toggleChat(this.checked)" {% if event.chat_active %}checked{% endif %} style="width:auto"> 채팅 활성화</label>
-</div>`;
-}
-function clearChat(){S.emit('chat:clear',{eventId:E});showToast('채팅 초기화')}
-function toggleChat(v){S.emit('host:update_event',{eventId:E,update:{chatActive:v?1:0}})}
-
-// === GAME FEATURES ===
-function gameFormHeader(title,icon,type){
-GT=type;
-return `<div class="game-form"><h3>${icon} ${title}</h3>
-<div class="status-header"><div class="left"><span class="badge ${GID?'badge-success badge-dot':'badge-gray'}">${GID?'준비됨':'미준비'}</span></div>
-<div class="right"><button class="btn btn-sm btn-primary" onclick="prepareGame('${type}')"><i class="ri-add-line"></i> 준비</button>
-<button class="btn btn-sm btn-success" onclick="startGame()" ${GID?'':'disabled'}><i class="ri-play-fill"></i> 시작</button>
-<button class="btn btn-sm btn-danger" onclick="endGame()"><i class="ri-stop-fill"></i> 종료</button>
-<button class="btn btn-sm btn-warning" onclick="gradeAnswers()"><i class="ri-check-double-line"></i> 채점</button>
-<button class="btn btn-sm btn-outline" onclick="awardPoints()"><i class="ri-coin-line"></i> 지급</button></div></div>`;
+function rf(){
+  var a = $('FA');
+  switch(curFeat){
+    case 'preparing': rPreparing(a); break;
+    case 'management': rManagement(a); break;
+    case 'score': rScore(a); break;
+    case 'chat': rChat(a); break;
+    case 'quiz_multiple': rQuizM(a); break;
+    case 'quiz_subjective': rQuizS(a); break;
+    case 'quiz_order': rQuizO(a); break;
+    case 'buzzer': rBuzzer(a); break;
+    case 'buzzer_count': rBuzzerC(a); break;
+    case 'code_number': rCodeNum(a); break;
+    case 'bingo': rBingo(a); break;
+    case 'timer': rTimer(a); break;
+    case 'lottery': rLottery(a); break;
+    case 'like': rLike(a); break;
+    case 'settings': rSettings(a); break;
+    default: a.innerHTML='<p>기능을 선택하세요</p>';
+  }
 }
 
-// Quiz Multiple
-function renderQuizMultiple(a){
-a.innerHTML=gameFormHeader('객관식','📝','객관식')+`
-<div class="form-group mt-4"><label>문제</label><textarea id="gQuestion" placeholder="문제를 입력하세요" rows="2"></textarea></div>
-<div class="form-group"><label>보기 (최대 10개)</label>
-<div id="optionsList">${[1,2,3,4].map(i=>`<div class="flex gap-2 mb-2"><span style="width:32px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border-radius:8px;font-weight:700;font-size:12px">${i}</span><input id="opt${i}" placeholder="보기 ${i}"></div>`).join('')}</div>
-<button class="btn btn-sm btn-ghost" onclick="addOption()"><i class="ri-add-line"></i> 보기 추가</button></div>
-<div class="form-row"><div class="form-group"><label>정답 번호 (쉼표 구분)</label><input id="gAnswer" placeholder="1" value="1"></div>
-<div class="form-group"><label>정답 개수</label><input type="number" id="gAnswerCnt" value="1" min="1" max="5"></div></div>
-<div class="form-row"><div class="form-group"><label>점수</label><input type="number" id="gPoints" value="10"></div>
-<div class="form-group"><label>제한시간 (초, 0=무제한)</label><input type="number" id="gTime" value="30"></div></div>
-</div>`;
-}
-let optCount=4;
-function addOption(){optCount++;const el=$('optionsList');el.insertAdjacentHTML('beforeend',`<div class="flex gap-2 mb-2"><span style="width:32px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border-radius:8px;font-weight:700;font-size:12px">${optCount}</span><input id="opt${optCount}" placeholder="보기 ${optCount}"></div>`)}
-
-// Quiz Subjective
-function renderQuizSubjective(a){
-a.innerHTML=gameFormHeader('주관식','✏️','주관식')+`
-<div class="form-group mt-4"><label>문제</label><textarea id="gQuestion" placeholder="문제를 입력하세요" rows="2"></textarea></div>
-<div class="form-row"><div class="form-group"><label>점수</label><input type="number" id="gPoints" value="10"></div>
-<div class="form-group"><label>제한시간 (초)</label><input type="number" id="gTime" value="60"></div></div>
-<div class="form-group"><label>정답 (채점용, 쉼표 구분)</label><input id="gAnswer" placeholder="정답1, 정답2"></div>
-</div>`;
+// --- PREPARING ---
+function rPreparing(a){
+  a.innerHTML='<div class="game-form"><h3>📋 이벤트 준비</h3>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">'+
+  '<div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;padding:16px;text-align:center"><div style="font-size:32px;font-weight:900;color:#4f46e5">'+EP.length+'</div><div style="font-size:12px;color:#4f46e5;font-weight:600">참가자</div></div>'+
+  '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:16px;text-align:center"><div style="font-size:32px;font-weight:900;color:#16a34a">'+ETEAMS.length+'</div><div style="font-size:12px;color:#16a34a;font-weight:600">팀</div></div></div>'+
+  '<p style="font-size:14px">참가 코드: <strong style="font-size:22px;color:#5669FF">'+ECODE+'</strong></p>'+
+  '<p style="font-size:13px;color:#94a3b8;margin-top:4px">참가 URL: <a href="'+EURL+'" target="_blank" style="color:#5669FF">'+EURL+'</a></p>'+
+  '<div class="qr-box"><canvas id="qrCanvas"></canvas><p style="font-size:11px;color:#94a3b8;margin-top:8px">QR코드로 참가하기</p></div>'+
+  '<div style="display:flex;gap:8px;margin-top:16px"><button class="btn btn-primary" id="pBtnWait">대기화면</button><button class="btn btn-outline" id="pBtnMon">모니터 열기</button></div>'+
+  '</div>';
+  // QR
+  if(typeof QRCode!=='undefined'){
+    QRCode.toCanvas($('qrCanvas'), EURL, {width:200,margin:2}, function(err){});
+  }
+  $('pBtnWait').onclick=function(){setDisp('대기');};
+  $('pBtnMon').onclick=function(){window.open('/event/monitor/'+EID);};
 }
 
-// Quiz Order
-function renderQuizOrder(a){
-a.innerHTML=gameFormHeader('순서 맞추기','🔢','순서맞추기')+`
-<div class="form-group mt-4"><label>문제</label><textarea id="gQuestion" placeholder="문제를 입력하세요" rows="2"></textarea></div>
-<div class="form-group"><label>항목 (줄바꿈으로 구분)</label><textarea id="gItems" placeholder="항목1\n항목2\n항목3\n항목4" rows="4"></textarea></div>
-<div class="form-row"><div class="form-group"><label>점수</label><input type="number" id="gPoints" value="10"></div>
-<div class="form-group"><label>제한시간 (초)</label><input type="number" id="gTime" value="60"></div></div>
-</div>`;
+// --- MANAGEMENT ---
+function rManagement(a){
+  var h='<div class="game-form"><h3><i class="ri-group-line"></i> 팀/개인 관리</h3>'+
+  '<table class="p-table"><thead><tr><th>이름</th><th>팀</th><th>점수</th><th>상태</th><th></th></tr></thead><tbody>';
+  EP.forEach(function(p){
+    var tn='-'; ETEAMS.forEach(function(t){if(t.id==p.team_id)tn=t.name;});
+    h+='<tr><td style="font-weight:600">'+p.name+'</td><td>'+tn+'</td><td style="font-weight:700;color:#5669FF">'+p.score+'</td><td><span class="badge badge-success">참가</span></td><td><button class="btn btn-ghost btn-sm kick-btn" data-pid="'+p.id+'"><i class="ri-close-line"></i></button></td></tr>';
+  });
+  h+='</tbody></table></div>';
+  a.innerHTML=h;
+  a.querySelectorAll('.kick-btn').forEach(function(b){
+    b.onclick=function(){if(confirm('퇴장시키겠습니까?'))S.emit('host:manage_participant',{eventId:EID,action:'kick',participantId:parseInt(this.dataset.pid)});};
+  });
 }
 
-// Buzzer
-function renderBuzzer(a){
-a.innerHTML=gameFormHeader('부저','🔔','부저')+`
-<div class="form-group mt-4"><label>점수</label><input type="number" id="gPoints" value="10"></div>
-<p class="text-sm text-muted mt-2">참가자가 가장 먼저 부저를 누르면 응답 목록에 순서대로 표시됩니다.</p></div>`;
+// --- SCORE ---
+function rScore(a){
+  var h='<div class="game-form"><h3><i class="ri-trophy-line"></i> 점수 관리</h3>'+
+  '<div style="display:flex;gap:8px;margin-bottom:16px"><button class="btn btn-sm btn-outline score-disp" data-m="개인 점수">개인 점수 표시</button><button class="btn btn-sm btn-outline score-disp" data-m="팀 점수">팀 점수 표시</button></div>';
+  if(ETEAMS.length>0){
+    h+='<h4 style="font-size:14px;font-weight:600;margin-bottom:8px">팀 점수</h4><table class="p-table mb-4"><thead><tr><th>팀</th><th>점수</th><th>변경</th></tr></thead><tbody>';
+    ETEAMS.forEach(function(t){h+='<tr><td style="font-weight:600">'+t.name+'</td><td style="font-weight:700;color:#5669FF">'+t.score+'</td><td><div style="display:flex;gap:4px"><input type="number" class="score-input ts-in" data-tid="'+t.id+'" value="0"><button class="btn btn-sm btn-primary ts-btn" data-tid="'+t.id+'">적용</button></div></td></tr>';});
+    h+='</tbody></table>';
+  }
+  h+='<h4 style="font-size:14px;font-weight:600;margin-bottom:8px">개인 점수</h4><table class="p-table"><thead><tr><th>#</th><th>이름</th><th>팀</th><th>점수</th><th>변경</th></tr></thead><tbody>';
+  EP.slice().sort(function(a,b){return b.score-a.score;}).forEach(function(p,i){
+    var tn='-'; ETEAMS.forEach(function(t){if(t.id==p.team_id)tn=t.name;});
+    h+='<tr><td>'+(i<3?['🥇','🥈','🥉'][i]:(i+1))+'</td><td style="font-weight:600">'+p.name+'</td><td>'+tn+'</td><td style="font-weight:700;color:#5669FF">'+p.score+'</td><td><div style="display:flex;gap:4px"><input type="number" class="score-input ps-in" data-pid="'+p.id+'" value="0"><button class="btn btn-sm btn-primary ps-btn" data-pid="'+p.id+'">적용</button></div></td></tr>';
+  });
+  h+='</tbody></table></div>';
+  a.innerHTML=h;
+  a.querySelectorAll('.score-disp').forEach(function(b){b.onclick=function(){setDisp(this.dataset.m);};});
+  a.querySelectorAll('.ts-btn').forEach(function(b){b.onclick=function(){var v=parseInt(a.querySelector('.ts-in[data-tid="'+this.dataset.tid+'"]').value)||0;S.emit('host:update_team_score',{eventId:EID,teamId:parseInt(this.dataset.tid),score:v});};});
+  a.querySelectorAll('.ps-btn').forEach(function(b){b.onclick=function(){var v=parseInt(a.querySelector('.ps-in[data-pid="'+this.dataset.pid+'"]').value)||0;S.emit('host:update_participant_score',{eventId:EID,participantId:parseInt(this.dataset.pid),score:v});};});
 }
 
-// Buzzer Count
-function renderBuzzerCount(a){
-a.innerHTML=gameFormHeader('부저카운트','⚡','부저카운트')+`
-<div class="form-row mt-4"><div class="form-group"><label>목표 클릭 수</label><input type="number" id="gTarget" value="100"></div>
-<div class="form-group"><label>게임 모드</label><select id="gMode"><option value="individual">개인전</option><option value="team">팀전</option></select></div></div>
-<p class="text-sm text-muted mt-2">목표 클릭 수에 먼저 도달하는 참가자/팀이 승리합니다.</p></div>`;
+// --- CHAT ---
+function rChat(a){
+  a.innerHTML='<div class="game-form"><h3><i class="ri-chat-3-line"></i> 채팅 관리</h3>'+
+  '<div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn btn-sm btn-outline" id="cDispBtn">채팅 화면 표시</button><button class="btn btn-sm btn-danger" id="cClearBtn"><i class="ri-delete-bin-line"></i> 초기화</button></div></div>';
+  $('cDispBtn').onclick=function(){setDisp('채팅');};
+  $('cClearBtn').onclick=function(){S.emit('chat:clear',{eventId:EID});showToast('채팅 초기화');};
 }
 
-// Code Number
-function renderCodeNumber(a){
-a.innerHTML=gameFormHeader('코드넘버','🔲','코드넘버')+`
-<div class="form-row mt-4"><div class="form-group"><label>보드 크기</label><input type="number" id="gBoardSize" value="9" min="4" max="20"></div>
-<div class="form-group"><label>최대 숫자</label><input type="number" id="gMaxNum" value="30"></div></div>
-<div class="form-group"><label>속도 (초)</label><input type="number" id="gSpeed" value="3"></div>
-<div class="flex gap-2 mt-4"><button class="btn btn-primary" onclick="cnNext()"><i class="ri-skip-forward-fill"></i> 다음 숫자</button><button class="btn btn-success" onclick="cnAutoStart()">▶ 자동</button><button class="btn btn-danger" onclick="cnAutoStop()">■ 정지</button></div>
-<div id="cnNum" class="cn-display">-</div></div>`;
+// --- GAME HEADER ---
+function gHead(title,icon,type){
+  GT=type;
+  return '<div class="game-form"><h3>'+icon+' '+title+'</h3>'+
+  '<div class="status-header"><div><span class="badge '+(GID?'badge-success':'badge-gray')+'">'+(GID?'준비됨':'미준비')+'</span></div>'+
+  '<div class="ctrl-btns"><button class="btn btn-sm btn-primary g-prep" data-t="'+type+'"><i class="ri-add-line"></i> 준비</button>'+
+  '<button class="btn btn-sm btn-success g-start" '+(GID?'':'disabled')+'><i class="ri-play-fill"></i> 시작</button>'+
+  '<button class="btn btn-sm btn-danger g-end"><i class="ri-stop-fill"></i> 종료</button>'+
+  '<button class="btn btn-sm btn-warning g-grade"><i class="ri-check-double-line"></i> 채점</button>'+
+  '<button class="btn btn-sm btn-outline g-award"><i class="ri-coin-line"></i> 지급</button></div></div>';
 }
-function cnNext(){S.emit('host:code_number_next',{eventId:E,gameId:GID})}
-function cnAutoStart(){S.emit('host:code_number_start_auto',{eventId:E,gameId:GID})}
-function cnAutoStop(){S.emit('host:code_number_stop_auto',{eventId:E,gameId:GID})}
-
-// Bingo
-function renderBingo(a){
-a.innerHTML=gameFormHeader('빙고','🎯','빙고')+`
-<div class="form-row mt-4"><div class="form-group"><label>빙고 크기</label><input type="number" id="gBingoSize" value="5" min="3" max="7"></div>
-<div class="form-group"><label>타입</label><select id="gBingoType"><option value="숫자빙고">숫자빙고</option><option value="단어빙고">단어빙고</option></select></div></div>
-<div class="form-group"><label>점수 (빙고 1줄당)</label><input type="number" id="gPoints" value="10"></div></div>`;
+function bindGameBtns(a){
+  var pb=a.querySelector('.g-prep'); if(pb) pb.onclick=function(){prepareGame(this.dataset.t);};
+  var sb=a.querySelector('.g-start'); if(sb) sb.onclick=function(){startGame();};
+  var eb=a.querySelector('.g-end'); if(eb) eb.onclick=function(){endGame();};
+  var gb=a.querySelector('.g-grade'); if(gb) gb.onclick=function(){gradeAnswers();};
+  var ab=a.querySelector('.g-award'); if(ab) ab.onclick=function(){awardPoints();};
 }
 
-// Timer
-function renderTimerFeat(a){
-a.innerHTML=`<div class="game-form"><h3>⏱️ 타이머</h3>
-<div class="status-header"><div class="left"><span class="badge ${GID?'badge-success badge-dot':'badge-gray'}">${GID?'준비됨':'미준비'}</span></div>
-<div class="right"><button class="btn btn-sm btn-primary" onclick="prepareTimer()"><i class="ri-add-line"></i> 준비</button>
-<button class="btn btn-sm btn-success" onclick="startTimer()" ${GID?'':'disabled'}><i class="ri-play-fill"></i> 시작</button>
-<button class="btn btn-sm btn-danger" onclick="endTimer()"><i class="ri-stop-fill"></i> 종료</button></div></div>
-<div class="form-row mt-4"><div class="form-group"><label>시간 (초)</label><input type="number" id="gTimeLimit" value="60"></div>
-<div class="form-group"><label>타입</label><select id="gTimerType"><option value="participant">개별</option><option value="team">팀</option></select></div></div>
-<div id="timerDisp" style="font-size:72px;font-weight:900;text-align:center;color:var(--point-500);margin:16px 0;font-family:monospace">--:--</div></div>`;
+// --- QUIZ MULTIPLE ---
+function rQuizM(a){
+  optCount=4;
+  a.innerHTML=gHead('객관식','📝','객관식')+
+  '<div class="form-group mt-3"><label>문제</label><textarea id="gQ" placeholder="문제 입력" rows="2"></textarea></div>'+
+  '<div class="form-group"><label>보기</label><div id="optList">'+
+  [1,2,3,4].map(function(i){return '<div style="display:flex;gap:6px;margin-bottom:6px"><span style="width:32px;height:38px;display:flex;align-items:center;justify-content:center;background:#f1f5f9;border-radius:8px;font-weight:700;font-size:12px">'+i+'</span><input id="opt'+i+'" placeholder="보기 '+i+'"></div>';}).join('')+
+  '</div><button class="btn btn-sm btn-ghost" id="addOptBtn"><i class="ri-add-line"></i> 보기 추가</button></div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="form-group"><label>정답 번호 (쉼표구분)</label><input id="gA" value="1"></div><div class="form-group"><label>정답 개수</label><input type="number" id="gAC" value="1" min="1"></div></div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="form-group"><label>점수</label><input type="number" id="gP" value="10"></div><div class="form-group"><label>제한시간(초, 0=무제한)</label><input type="number" id="gT" value="30"></div></div></div>';
+  bindGameBtns(a);
+  $('addOptBtn').onclick=function(){optCount++;var el=$('optList');el.insertAdjacentHTML('beforeend','<div style="display:flex;gap:6px;margin-bottom:6px"><span style="width:32px;height:38px;display:flex;align-items:center;justify-content:center;background:#f1f5f9;border-radius:8px;font-weight:700;font-size:12px">'+optCount+'</span><input id="opt'+optCount+'" placeholder="보기 '+optCount+'"></div>');};
 }
 
-// Lottery
-function renderLottery(a){
-a.innerHTML=`<div class="game-form"><h3>🎁 행운권 추첨</h3>
-<div class="form-group"><label>당첨자 수</label><input type="number" id="gWinnerCnt" value="1" min="1"></div>
-<button class="btn btn-primary btn-lg btn-block mt-4" onclick="doLottery()"><i class="ri-gift-line"></i> 추첨하기!</button>
-<div id="lotteryRes" class="lottery-result mt-4"></div></div>`;
+// --- QUIZ SUBJECTIVE ---
+function rQuizS(a){
+  a.innerHTML=gHead('주관식','✏️','주관식')+
+  '<div class="form-group mt-3"><label>문제</label><textarea id="gQ" placeholder="문제 입력" rows="2"></textarea></div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="form-group"><label>점수</label><input type="number" id="gP" value="10"></div><div class="form-group"><label>제한시간(초)</label><input type="number" id="gT" value="60"></div></div>'+
+  '<div class="form-group"><label>정답 (채점용, 쉼표구분)</label><input id="gA" placeholder="정답1, 정답2"></div></div>';
+  bindGameBtns(a);
 }
 
-// Like
-function renderLike(a){
-a.innerHTML=`<div class="game-form"><h3>❤️ 좋아요</h3>
-<label class="flex items-center gap-2 mb-3" style="cursor:pointer;font-size:13px"><input type="checkbox" id="likeToggle" onchange="toggleLike(this.checked)" {% if event.like_active %}checked{% endif %} style="width:auto"> 좋아요 활성화</label>
-<button class="btn btn-sm btn-outline" onclick="setDisplay('좋아요')">좋아요 화면 표시</button>
-<div class="text-center mt-4"><div style="font-size:48px">❤️</div><div style="font-size:36px;font-weight:900;color:var(--danger);margin-top:8px" id="likeCount">0</div></div></div>`;
-}
-function toggleLike(v){S.emit('host:update_event',{eventId:E,update:{likeActive:v?1:0}})}
-
-// Settings
-function renderSettings(a){
-a.innerHTML=`<div class="game-form"><h3><i class="ri-settings-3-line"></i> 설정</h3>
-<div class="form-group"><label>참가자 화면 모드</label><select id="displaySelect" onchange="setDisplay(this.value)">
-<option value="대기">대기</option><option value="점수">점수</option><option value="개인 점수">개인 점수</option><option value="팀 점수">팀 점수</option><option value="채팅">채팅</option><option value="좋아요">좋아요</option><option value="추첨">추첨</option><option value="타이머">타이머</option><option value="관리">관리</option>
-</select></div>
-<div class="form-group"><label>팀 점수 계산 방식</label><select id="teamScoreType" onchange="setTeamScoreType(this.value)">
-<option value="sum" ${{'{{ "selected" if event.team_score_type == "sum" else "" }}'}}>합산</option><option value="average" ${{'{{ "selected" if event.team_score_type == "average" else "" }}'}}>평균</option>
-</select></div>
-<p class="text-sm text-muted mt-2">관리 페이지: <a href="/dashboard/event/{{ event.id }}/manage" class="text-primary" target="_blank">이벤트 관리 →</a></p>
-</div>`;
+// --- QUIZ ORDER ---
+function rQuizO(a){
+  a.innerHTML=gHead('순서 맞추기','🔢','순서맞추기')+
+  '<div class="form-group mt-3"><label>문제</label><textarea id="gQ" placeholder="문제 입력" rows="2"></textarea></div>'+
+  '<div class="form-group"><label>항목 (줄바꿈 구분)</label><textarea id="gItems" placeholder="항목1\n항목2\n항목3" rows="4"></textarea></div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="form-group"><label>점수</label><input type="number" id="gP" value="10"></div><div class="form-group"><label>제한시간(초)</label><input type="number" id="gT" value="60"></div></div></div>';
+  bindGameBtns(a);
 }
 
-// === Game Actions ===
+// --- BUZZER ---
+function rBuzzer(a){
+  a.innerHTML=gHead('부저','🔔','부저')+'<div class="form-group mt-3"><label>점수</label><input type="number" id="gP" value="10"></div><p style="font-size:13px;color:#94a3b8;margin-top:8px">참가자가 먼저 누르면 응답에 순서대로 표시됩니다.</p></div>';
+  bindGameBtns(a);
+}
+
+// --- BUZZER COUNT ---
+function rBuzzerC(a){
+  a.innerHTML=gHead('부저카운트','⚡','부저카운트')+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" class="mt-3"><div class="form-group"><label>목표 클릭 수</label><input type="number" id="gTarget" value="100"></div><div class="form-group"><label>모드</label><select id="gMode"><option value="individual">개인전</option><option value="team">팀전</option></select></div></div></div>';
+  bindGameBtns(a);
+}
+
+// --- CODE NUMBER ---
+function rCodeNum(a){
+  a.innerHTML=gHead('코드넘버','🔲','코드넘버')+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" class="mt-3"><div class="form-group"><label>보드 크기</label><input type="number" id="gBS" value="9" min="4" max="20"></div><div class="form-group"><label>최대 숫자</label><input type="number" id="gMN" value="30"></div></div>'+
+  '<div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-primary" id="cnNextBtn"><i class="ri-skip-forward-fill"></i> 다음</button><button class="btn btn-success" id="cnAutoBtn">▶ 자동</button><button class="btn btn-danger" id="cnStopBtn">■ 정지</button></div>'+
+  '<div id="cnNum" class="cn-display">-</div></div>';
+  bindGameBtns(a);
+  $('cnNextBtn').onclick=function(){S.emit('host:code_number_next',{eventId:EID,gameId:GID});};
+  $('cnAutoBtn').onclick=function(){S.emit('host:code_number_start_auto',{eventId:EID,gameId:GID});};
+  $('cnStopBtn').onclick=function(){S.emit('host:code_number_stop_auto',{eventId:EID,gameId:GID});};
+}
+
+// --- BINGO ---
+function rBingo(a){
+  a.innerHTML=gHead('빙고','🎯','빙고')+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" class="mt-3"><div class="form-group"><label>크기</label><input type="number" id="gBSize" value="5" min="3" max="7"></div><div class="form-group"><label>타입</label><select id="gBType"><option value="숫자빙고">숫자빙고</option><option value="단어빙고">단어빙고</option></select></div></div>'+
+  '<div class="form-group"><label>점수(빙고 1줄당)</label><input type="number" id="gP" value="10"></div></div>';
+  bindGameBtns(a);
+}
+
+// --- TIMER ---
+function rTimer(a){
+  a.innerHTML='<div class="game-form"><h3>⏱️ 타이머</h3>'+
+  '<div class="status-header"><span class="badge '+(GID?'badge-success':'badge-gray')+'">'+(GID?'준비됨':'미준비')+'</span>'+
+  '<div class="ctrl-btns"><button class="btn btn-sm btn-primary" id="tPrepBtn"><i class="ri-add-line"></i> 준비</button>'+
+  '<button class="btn btn-sm btn-success" id="tStartBtn" '+(GID?'':'disabled')+'><i class="ri-play-fill"></i> 시작</button>'+
+  '<button class="btn btn-sm btn-danger" id="tEndBtn"><i class="ri-stop-fill"></i> 종료</button></div></div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" class="mt-3"><div class="form-group"><label>시간(초)</label><input type="number" id="gTL" value="60"></div><div class="form-group"><label>타입</label><select id="gTT"><option value="participant">개별</option><option value="team">팀</option></select></div></div>'+
+  '<div id="tDisp" style="font-size:72px;font-weight:900;text-align:center;color:#5669FF;margin:16px 0;font-family:monospace">--:--</div></div>';
+  $('tPrepBtn').onclick=function(){S.emit('host:prepare_timer',{eventId:EID,settings:{timeLimit:parseInt($('gTL').value)||60,timer:{type:$('gTT').value||'participant'}}});};
+  $('tStartBtn').onclick=function(){S.emit('host:start_timer',{eventId:EID,timerId:GID});};
+  $('tEndBtn').onclick=function(){S.emit('host:end_timer',{eventId:EID,timerId:GID});};
+}
+
+// --- LOTTERY ---
+function rLottery(a){
+  a.innerHTML='<div class="game-form"><h3>🎁 행운권 추첨</h3>'+
+  '<div class="form-group"><label>당첨자 수</label><input type="number" id="gWC" value="1" min="1"></div>'+
+  '<button class="btn btn-primary btn-lg" style="width:100%;margin-top:12px" id="lotBtn"><i class="ri-gift-line"></i> 추첨하기!</button>'+
+  '<div id="lotRes" style="text-align:center;padding:20px;font-size:24px;font-weight:800;color:#5669FF;margin-top:12px"></div></div>';
+  $('lotBtn').onclick=function(){S.emit('host:lottery_add',{eventId:EID,gameId:GID,winnerCount:parseInt($('gWC').value)||1});};
+}
+
+// --- LIKE ---
+function rLike(a){
+  a.innerHTML='<div class="game-form"><h3>❤️ 좋아요</h3>'+
+  '<div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn btn-sm btn-outline" id="likeDispBtn">좋아요 화면 표시</button></div>'+
+  '<div style="text-align:center;margin-top:16px"><div style="font-size:48px">❤️</div><div style="font-size:36px;font-weight:900;color:#EF4444;margin-top:8px" id="likeCnt">0</div></div></div>';
+  $('likeDispBtn').onclick=function(){setDisp('좋아요');};
+}
+
+// --- SETTINGS ---
+function rSettings(a){
+  a.innerHTML='<div class="game-form"><h3><i class="ri-settings-3-line"></i> 설정</h3>'+
+  '<div class="form-group"><label>참가자 화면 모드</label><select id="dispSel"><option value="대기">대기</option><option value="점수">점수</option><option value="개인 점수">개인 점수</option><option value="팀 점수">팀 점수</option><option value="채팅">채팅</option><option value="좋아요">좋아요</option><option value="추첨">추첨</option><option value="타이머">타이머</option></select></div>'+
+  '<button class="btn btn-primary" id="dispApplyBtn">적용</button>'+
+  '<p style="font-size:13px;color:#94a3b8;margin-top:12px">관리 페이지: <a href="/dashboard/event/'+EID+'/manage" style="color:#5669FF" target="_blank">이벤트 관리 →</a></p></div>';
+  $('dispApplyBtn').onclick=function(){setDisp($('dispSel').value);};
+}
+
+// --- GAME ACTIONS ---
 function prepareGame(type){
-GT=type;let s={};
-if(type==='객관식'){
-const opts=[];for(let i=1;i<=optCount;i++){const v=$('opt'+i)?.value;if(v)opts.push(v)}
-const ans=($('gAnswer')?.value||'1').split(',').map(x=>parseInt(x.trim()));
-s={quiz:{question:$('gQuestion')?.value||'',options:opts,answer:ans},points:parseInt($('gPoints')?.value)||10,timeLimit:parseInt($('gTime')?.value)||30,answerCount:parseInt($('gAnswerCnt')?.value)||1,correctAnswers:ans};
-}else if(type==='주관식'){
-s={quiz:{question:$('gQuestion')?.value||''},points:parseInt($('gPoints')?.value)||10,timeLimit:parseInt($('gTime')?.value)||60};
-}else if(type==='순서맞추기'){
-const items=($('gItems')?.value||'').split('\n').filter(x=>x.trim());
-s={sequence:{question:$('gQuestion')?.value||'',items},points:parseInt($('gPoints')?.value)||10,timeLimit:parseInt($('gTime')?.value)||60};
-}else if(type==='부저'){
-s={points:parseInt($('gPoints')?.value)||10};
-}else if(type==='부저카운트'){
-s={buzzerCount:{targetClicks:parseInt($('gTarget')?.value)||100,gameMode:$('gMode')?.value||'individual'}};
-}else if(type==='코드넘버'){
-s={codeNumber:{boardSize:parseInt($('gBoardSize')?.value)||9,maxNumber:parseInt($('gMaxNum')?.value)||30,gameSpeed:parseInt($('gSpeed')?.value)||3}};
-}else if(type==='빙고'){
-s={bingo:{size:parseInt($('gBingoSize')?.value)||5,type:$('gBingoType')?.value||'숫자빙고'},points:parseInt($('gPoints')?.value)||10};
+  GT=type; var s={};
+  if(type==='객관식'){
+    var opts=[]; for(var i=1;i<=optCount;i++){var v=$('opt'+i); if(v&&v.value) opts.push(v.value);}
+    var ans=($('gA')?$('gA').value:'1').split(',').map(function(x){return parseInt(x.trim());});
+    s={quiz:{question:$('gQ')?$('gQ').value:'',options:opts,answer:ans},points:parseInt($('gP')?$('gP').value:10)||10,timeLimit:parseInt($('gT')?$('gT').value:30)||30,answerCount:parseInt($('gAC')?$('gAC').value:1)||1,correctAnswers:ans};
+  } else if(type==='주관식'){
+    s={quiz:{question:$('gQ')?$('gQ').value:''},points:parseInt($('gP')?$('gP').value:10)||10,timeLimit:parseInt($('gT')?$('gT').value:60)||60};
+  } else if(type==='순서맞추기'){
+    var items=($('gItems')?$('gItems').value:'').split('\n').filter(function(x){return x.trim();});
+    s={sequence:{question:$('gQ')?$('gQ').value:'',items:items},points:parseInt($('gP')?$('gP').value:10)||10,timeLimit:parseInt($('gT')?$('gT').value:60)||60};
+  } else if(type==='부저'){
+    s={points:parseInt($('gP')?$('gP').value:10)||10};
+  } else if(type==='부저카운트'){
+    s={buzzerCount:{targetClicks:parseInt($('gTarget')?$('gTarget').value:100)||100,gameMode:$('gMode')?$('gMode').value:'individual'}};
+  } else if(type==='코드넘버'){
+    s={codeNumber:{boardSize:parseInt($('gBS')?$('gBS').value:9)||9,maxNumber:parseInt($('gMN')?$('gMN').value:30)||30}};
+  } else if(type==='빙고'){
+    s={bingo:{size:parseInt($('gBSize')?$('gBSize').value:5)||5,type:$('gBType')?$('gBType').value:'숫자빙고'},points:parseInt($('gP')?$('gP').value:10)||10};
+  }
+  S.emit('host:prepare_game',{eventId:EID,type:type,settings:s});
 }
-S.emit('host:prepare_game',{eventId:E,type,settings:s});
+function startGame(){
+  if(!GID){showToast('먼저 준비하세요','error');return;}
+  var s={};
+  if(GT==='객관식'){
+    var opts=[]; for(var i=1;i<=optCount;i++){var v=$('opt'+i); if(v&&v.value) opts.push(v.value);}
+    var ans=($('gA')?$('gA').value:'1').split(',').map(function(x){return parseInt(x.trim());});
+    s={quiz:{question:$('gQ')?$('gQ').value:'',options:opts,answer:ans},points:parseInt($('gP')?$('gP').value:10)||10,timeLimit:parseInt($('gT')?$('gT').value:30)||30,answerCount:parseInt($('gAC')?$('gAC').value:1)||1,correctAnswers:ans};
+  } else if(GT==='주관식'){s={quiz:{question:$('gQ')?$('gQ').value:''},points:parseInt($('gP')?$('gP').value:10)||10,timeLimit:parseInt($('gT')?$('gT').value:60)||60};}
+  else if(GT==='순서맞추기'){var items=($('gItems')?$('gItems').value:'').split('\n').filter(function(x){return x.trim();});s={sequence:{question:$('gQ')?$('gQ').value:'',items:items},points:parseInt($('gP')?$('gP').value:10)||10,timeLimit:parseInt($('gT')?$('gT').value:60)||60};}
+  S.emit('host:start_game',{eventId:EID,gameId:GID,settings:s});
 }
-function startGame(){if(!GID)return showToast('먼저 준비하세요','error');
-let s={};if(GT==='객관식'){const opts=[];for(let i=1;i<=optCount;i++){const v=$('opt'+i)?.value;if(v)opts.push(v)}
-const ans=($('gAnswer')?.value||'1').split(',').map(x=>parseInt(x.trim()));
-s={quiz:{question:$('gQuestion')?.value||'',options:opts,answer:ans},points:parseInt($('gPoints')?.value)||10,timeLimit:parseInt($('gTime')?.value)||30,answerCount:parseInt($('gAnswerCnt')?.value)||1,correctAnswers:ans};}
-else if(GT==='주관식')s={quiz:{question:$('gQuestion')?.value||''},points:parseInt($('gPoints')?.value)||10,timeLimit:parseInt($('gTime')?.value)||60};
-else if(GT==='순서맞추기'){const items=($('gItems')?.value||'').split('\n').filter(x=>x.trim());s={sequence:{question:$('gQuestion')?.value||'',items},points:parseInt($('gPoints')?.value)||10,timeLimit:parseInt($('gTime')?.value)||60};}
-S.emit('host:start_game',{eventId:E,gameId:GID,settings:s});
-}
-function endGame(){if(GID)S.emit('host:end_game',{eventId:E,gameId:GID})}
+function endGame(){if(GID)S.emit('host:end_game',{eventId:EID,gameId:GID});}
 function gradeAnswers(){
-const ans=$('gAnswer')?.value;
-if(!ans)return showToast('정답을 입력하세요','error');
-const arr=ans.split(',').map(x=>x.trim());
-S.emit('host:correct_answers',{eventId:E,gameId:GID,correctAnswers:arr});
-S.emit('host:grade_answers',{eventId:E,gameId:GID,correctAnswers:arr});
+  var ans=$('gA')?$('gA').value:'';
+  if(!ans){showToast('정답을 입력하세요','error');return;}
+  var arr=ans.split(',').map(function(x){return x.trim();});
+  S.emit('host:correct_answers',{eventId:EID,gameId:GID,correctAnswers:arr});
+  S.emit('host:grade_answers',{eventId:EID,gameId:GID,correctAnswers:arr});
 }
-function awardPoints(){S.emit('host:award_points',{eventId:E,gameId:GID})}
+function awardPoints(){S.emit('host:award_points',{eventId:EID,gameId:GID});}
+function setDisp(mode){S.emit('host:display_mode',{eventId:EID,displayMode:mode});}
 
-// Timer
-function prepareTimer(){const s={timeLimit:parseInt($('gTimeLimit')?.value)||60,timer:{type:$('gTimerType')?.value||'participant'}};
-S.emit('host:prepare_timer',{eventId:E,settings:s})}
-function startTimer(){S.emit('host:start_timer',{eventId:E,timerId:GID})}
-function endTimer(){S.emit('host:end_timer',{eventId:E,timerId:GID})}
-
-// Lottery
-function doLottery(){S.emit('host:lottery_add',{eventId:E,gameId:GID,winnerCount:parseInt($('gWinnerCnt')?.value)||1})}
-
-// Display mode
-function setDisplay(mode){S.emit('host:display_mode',{eventId:E,displayMode:mode})}
-function setTeamScoreType(type){S.emit('host:update_event',{eventId:E,update:{teamScoreType:type}})}
-
-// Event controls
-function startEvent(){S.emit('host:start_event',{eventId:E})}
-function endEvent(){if(confirm('이벤트를 종료하시겠습니까?'))S.emit('host:end_event',{eventId:E})}
-
-// Response tracking
-function addResponse(d){
-responses.push(d);
-const rl=$('respList');
-const div=document.createElement('div');div.className='resp-item';
-div.innerHTML=`<span class="name">${d.participantName||'참가자'}</span><span class="answer">${typeof d.answer==='object'?JSON.stringify(d.answer):d.answer}</span>`;
-rl.prepend(div);
-$('respCount').textContent=`응답 ${responses.length}명`;
+// --- Response tracking ---
+function addResp(d){
+  responses.push(d);
+  var div=document.createElement('div');div.className='resp-item';
+  div.innerHTML='<span style="font-weight:600">'+(d.participantName||'참가자')+'</span><span style="color:#64748b">'+(typeof d.answer==='object'?JSON.stringify(d.answer):d.answer)+'</span>';
+  $('RL').prepend(div);
+  $('respCnt').textContent='응답 '+responses.length+'명';
 }
-function updateBCResponse(d){
-const rl=$('respList');let el=rl.querySelector(`[data-pid="${d.participantId}"]`);
-const p=P.find(x=>x.id==d.participantId);
-if(!el){el=document.createElement('div');el.className='lb-item';el.dataset.pid=d.participantId;rl.appendChild(el)}
-el.innerHTML=`<span class="rank">${rl.children.length}</span><span style="flex:1;font-weight:600">${p?.name||'?'}</span><span class="clicks">${d.clicks}</span>`;
-// Sort by clicks desc
-const items=[...rl.children].sort((a,b)=>(parseInt(b.querySelector('.clicks')?.textContent)||0)-(parseInt(a.querySelector('.clicks')?.textContent)||0));
-items.forEach((it,i)=>{it.querySelector('.rank').textContent=i+1;rl.appendChild(it)});
+function updateBC(d){
+  var rl=$('RL'); var el=rl.querySelector('[data-pid="'+d.participantId+'"]');
+  var pn='?'; EP.forEach(function(p){if(p.id==d.participantId)pn=p.name;});
+  if(!el){el=document.createElement('div');el.className='resp-item';el.dataset.pid=d.participantId;rl.appendChild(el);}
+  el.innerHTML='<span style="font-weight:600">'+pn+'</span><span style="font-weight:800;color:#5669FF">'+d.clicks+'</span>';
 }
-function renderRevealedAnswers(d){
-const rl=$('respList');rl.innerHTML='';
-d.responses.forEach(r=>{
-const p=P.find(x=>x.id==r.participantId);
-const div=document.createElement('div');div.className='resp-item';
-div.innerHTML=`<span class="name">${p?.name||'?'}: ${r.answer||'-'}</span><span style="font-weight:700;color:${r.isCorrect?'var(--success)':'var(--danger)'}">${r.isCorrect?'✅ +'+r.earnedPoints:'❌'}</span>`;
-rl.appendChild(div);
-});
-const btn=document.createElement('button');btn.className='btn btn-success btn-sm btn-block mt-2';btn.textContent='💰 점수 지급';
-btn.onclick=()=>S.emit('host:award_points',{eventId:E,gameId:d.gameId});
-rl.appendChild(btn);
-$('respCount').textContent=`결과 ${d.responses.length}명`;
+function renderRevealed(d){
+  var rl=$('RL');rl.innerHTML='';
+  d.responses.forEach(function(r){
+    var pn='?'; EP.forEach(function(p){if(p.id==r.participantId)pn=p.name;});
+    var div=document.createElement('div');div.className='resp-item';
+    div.innerHTML='<span style="font-weight:600">'+pn+': '+(r.answer||'-')+'</span><span style="font-weight:700;color:'+(r.isCorrect?'#22C55E':'#EF4444')+'">'+(r.isCorrect?'✅ +'+r.earnedPoints:'❌')+'</span>';
+    rl.appendChild(div);
+  });
+  $('respCnt').textContent='결과 '+d.responses.length+'명';
 }
 
-// Chat
-function hSendChat(){const i=$('hChatIn');if(!i.value.trim())return;S.emit('chat:send',{eventId:E,message:i.value,senderName:'호스트',type:'all',author:'host'});i.value=''}
-function addHChat(d){const el=$('hChatMsgs');if(!el)return;const div=document.createElement('div');div.className='chat-msg '+(d.author==='host'?'mine':'other');div.innerHTML='<div class="sender">'+(d.senderName||'')+'</div>'+d.message;el.appendChild(div);el.scrollTop=el.scrollHeight}
+// --- Chat ---
+function addHChat(d){
+  var el=$('HCM');if(!el)return;
+  var div=document.createElement('div');div.className='chat-msg '+(d.author==='host'?'mine':'other');
+  div.innerHTML='<div class="sender">'+(d.senderName||'')+'</div>'+d.message;
+  el.appendChild(div);el.scrollTop=el.scrollHeight;
+}
 
 // Init
-renderFeat();
+$('pCnt').textContent = EP.length;
+rf();
+})();
 </script>
 {% endblock %}

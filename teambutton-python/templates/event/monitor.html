@@ -3,10 +3,10 @@
 {% block title %}모니터 - {{ event.title }}{% endblock %}
 {% block extra_css %}
 <style>
-body{background:linear-gradient(145deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);color:#E2E8F0;min-height:100vh}
+body{background:linear-gradient(145deg,#0f172a,#1e1b4b,#0f172a);color:#e2e8f0;min-height:100vh}
 .mon-header{text-align:center;padding:32px 16px 16px}
 .mon-header h1{font-size:36px;font-weight:900;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.3)}
-.mon-header p{font-size:16px;color:#94A3B8;margin-top:4px}
+.mon-header p{font-size:16px;color:#94a3b8;margin-top:4px}
 .rank-card{background:rgba(255,255,255,.05);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:24px;margin:16px;box-shadow:0 8px 32px rgba(0,0,0,.2)}
 .rank-card h2{font-size:20px;font-weight:700;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .team-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
@@ -16,16 +16,11 @@ body{background:linear-gradient(145deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);colo
 .team-box .name{font-size:18px;font-weight:700;color:#fff}
 .team-box .score{font-size:32px;font-weight:900;color:var(--point-300);margin-top:4px}
 .rank-table{width:100%;border-collapse:separate;border-spacing:0 6px}
-.rank-table tr{background:rgba(255,255,255,.04);border-radius:12px;transition:all .2s}
-.rank-table tr:hover{background:rgba(255,255,255,.08)}
-.rank-table td{padding:12px 16px;font-size:14px;color:#CBD5E1}
+.rank-table tr{background:rgba(255,255,255,.04);border-radius:12px}
+.rank-table td{padding:12px 16px;font-size:14px;color:#cbd5e1}
 .rank-table td:first-child{border-radius:12px 0 0 12px;font-weight:700;width:50px;text-align:center}
-.rank-table td:last-child{border-radius:0 12px 12px 0;text-align:right;font-weight:800;color:var(--point-300);font-size:18px;font-variant-numeric:tabular-nums}
-.rank-medal{font-size:24px}
+.rank-table td:last-child{border-radius:0 12px 12px 0;text-align:right;font-weight:800;color:var(--point-300);font-size:18px}
 .game-overlay{position:fixed;inset:0;background:rgba(15,23,42,.95);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:100;text-align:center;padding:24px}
-.game-overlay h1{font-size:60px;margin-bottom:16px}
-.game-overlay h2{font-size:36px;font-weight:900;color:#fff}
-.game-overlay p{font-size:20px;color:#94A3B8}
 </style>
 {% endblock %}
 {% block content %}
@@ -34,45 +29,25 @@ body{background:linear-gradient(145deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);colo
 <p>{{ event.company_name }}</p>
 <span class="badge badge-gray" id="mStat" style="margin-top:8px;font-size:14px;padding:6px 16px">{{ event.status }}</span>
 </div>
-<div id="monitorBody">
+<div id="monBody">
 {% if teams %}
-<div class="rank-card">
-<h2>🏅 팀 순위</h2>
-<div class="team-grid">
-{% for t in teams %}
-<div class="team-box {% if loop.index == 1 %}gold{% endif %}">
-<div class="medal">{% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}{{ loop.index }}{% endif %}</div>
-<div class="name">{{ t.name }}</div>
-<div class="score">{{ t.score }}</div>
-</div>
-{% endfor %}
-</div>
-</div>
+<div class="rank-card"><h2>🏅 팀 순위</h2><div class="team-grid">
+{% for t in teams %}<div class="team-box {% if loop.index == 1 %}gold{% endif %}"><div class="medal">{% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}{{ loop.index }}{% endif %}</div><div class="name">{{ t.name }}</div><div class="score">{{ t.score }}</div></div>{% endfor %}
+</div></div>
 {% endif %}
-<div class="rank-card">
-<h2>👑 개인 순위</h2>
-<table class="rank-table" id="mRank">
-{% for p in participants[:20] %}
-<tr>
-<td>{% if loop.index <= 3 %}<span class="rank-medal">{% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% else %}🥉{% endif %}</span>{% else %}{{ loop.index }}{% endif %}</td>
-<td style="font-weight:600;color:#fff">{{ p.name }}</td>
-<td style="color:#94A3B8">{{ p.team_name or '' }}</td>
-<td>{{ p.score }}</td>
-</tr>
-{% endfor %}
-</table>
+<div class="rank-card"><h2>👑 개인 순위</h2><table class="rank-table" id="mRank">
+{% for p in participants[:20] %}<tr><td>{% if loop.index <= 3 %}<span style="font-size:24px">{% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% else %}🥉{% endif %}</span>{% else %}{{ loop.index }}{% endif %}</td><td style="font-weight:600;color:#fff">{{ p.name }}</td><td style="color:#94a3b8">{{ p.team_name or '' }}</td><td>{{ p.score }}</td></tr>{% endfor %}
+</table></div>
 </div>
-</div>
-<div id="gameOverlay" class="game-overlay hidden"></div>
+<div id="gOverlay" class="game-overlay hidden"></div>
 <script>
-const S=io(),E={{ event.id }};
-S.emit('participant:join',{eventId:E});
-S.on('event:started',()=>{$('mStat').textContent='진행중';$('mStat').className='badge badge-success'});
-S.on('event:ended',()=>{$('mStat').textContent='종료';$('mStat').className='badge badge-danger'});
-S.on('participants:updated',d=>{const ps=d.participants.sort((a,b)=>b.score-a.score);const el=$('mRank');el.innerHTML='';ps.slice(0,20).forEach((p,i)=>{el.innerHTML+=`<tr><td>${i<3?['🥇','🥈','🥉'][i]:(i+1)}</td><td style="font-weight:600;color:#fff">${p.name}</td><td style="color:#94A3B8">${p.team_name||''}</td><td>${p.score}</td></tr>`})});
-S.on('game:buzzer_count_winner',d=>{const o=$('gameOverlay');o.classList.remove('hidden');o.innerHTML=`<div><h1>🏆</h1><h2>${d.winner.name}</h2><p>${d.winner.clicks} 클릭으로 우승!</p></div>`;setTimeout(()=>o.classList.add('hidden'),8000)});
-S.on('game:lottery_result',d=>{const o=$('gameOverlay');o.classList.remove('hidden');o.innerHTML=`<div><h1>🎉</h1><h2>${d.winners.join(', ')}</h2><p>축하합니다!</p></div>`;setTimeout(()=>o.classList.add('hidden'),8000)});
-S.on('timer:tick',d=>{const m=Math.floor(d.remaining/60),s=d.remaining%60;document.title=m+':'+String(s).padStart(2,'0')});
-function $(id){return document.getElementById(id)}
+var S=io(),EID={{ event.id }};
+S.emit('participant:join',{eventId:EID});
+S.on('event:started',function(){document.getElementById('mStat').textContent='진행중';document.getElementById('mStat').className='badge badge-success'});
+S.on('event:ended',function(){document.getElementById('mStat').textContent='종료';document.getElementById('mStat').className='badge badge-danger'});
+S.on('participants:updated',function(d){var ps=d.participants.sort(function(a,b){return b.score-a.score});var el=document.getElementById('mRank');el.innerHTML='';ps.slice(0,20).forEach(function(p,i){el.innerHTML+='<tr><td>'+(i<3?['🥇','🥈','🥉'][i]:(i+1))+'</td><td style="font-weight:600;color:#fff">'+p.name+'</td><td style="color:#94a3b8">'+(p.team_name||'')+'</td><td>'+p.score+'</td></tr>'})});
+S.on('game:buzzer_count_winner',function(d){var o=document.getElementById('gOverlay');o.classList.remove('hidden');o.innerHTML='<div><div style="font-size:64px">🏆</div><h2 style="font-size:36px;font-weight:900;color:#fff;margin-top:16px">'+(d.winner?d.winner.name:'')+'</h2><p style="font-size:20px;color:#94a3b8;margin-top:8px">'+(d.winner?d.winner.clicks:0)+' 클릭으로 우승!</p></div>';setTimeout(function(){o.classList.add('hidden')},8000)});
+S.on('game:lottery_result',function(d){var o=document.getElementById('gOverlay');o.classList.remove('hidden');o.innerHTML='<div><div style="font-size:64px">🎉</div><h2 style="font-size:36px;font-weight:900;color:#fff;margin-top:16px">'+d.winners.join(', ')+'</h2><p style="font-size:20px;color:#94a3b8;margin-top:8px">축하합니다!</p></div>';setTimeout(function(){o.classList.add('hidden')},8000)});
+S.on('timer:tick',function(d){var m=Math.floor(d.remaining/60),s=d.remaining%60;document.title=m+':'+String(s).padStart(2,'0')});
 </script>
 {% endblock %}

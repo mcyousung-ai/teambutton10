@@ -1,37 +1,25 @@
 {% extends "base.html" %}
 {% block nav %}{% endblock %}
-{% block title %}이벤트 참가{% endblock %}
+{% block title %}{{ event.title }} 참가{% endblock %}
 {% block content %}
-<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
-<div style="max-width:400px;width:100%">
-{% if not event %}
-<div class="card text-center">
-<i class="ri-error-warning-line" style="font-size:48px;color:var(--danger)"></i>
-<h2 class="mt-2">이벤트를 찾을 수 없습니다</h2>
-<a href="/" class="btn btn-primary mt-4">홈으로</a>
+<div style="max-width:440px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:24px">
+<div style="text-align:center;margin-bottom:32px">
+<h1 style="font-size:28px;font-weight:900;background:linear-gradient(135deg,#5669FF,#7C3AED);-webkit-background-clip:text;-webkit-text-fill-color:transparent">{{ event.title }}</h1>
+{% if event.company_name %}<p style="color:#94a3b8;margin-top:4px">{{ event.company_name }}</p>{% endif %}
+<div style="margin-top:12px"><span class="badge badge-primary" style="font-size:13px;padding:6px 14px">참가 코드: {{ event.code }}</span></div>
 </div>
-{% else %}
-<div class="text-center mb-4">
-<i class="ri-team-fill" style="font-size:40px;color:var(--primary-light)"></i>
-<h2 style="margin-top:8px">{{ event.title }}</h2>
-<p class="text-muted">{{ event.company_name }}</p>
-</div>
-{% if error %}<div style="background:rgba(239,68,68,.1);border:1px solid var(--danger);padding:10px;border-radius:var(--radius-sm);margin-bottom:16px;color:var(--danger);font-size:14px">{{ error }}</div>{% endif %}
-<form method="POST" class="card">
-<div class="form-group"><label>이름 *</label><input type="text" name="name" required autofocus placeholder="이름을 입력하세요"></div>
+<div class="card">
+<form method="POST">
+<div class="form-group"><label>이름 *</label><input name="name" required placeholder="이름을 입력하세요" style="font-size:16px;padding:14px"></div>
 {% if teams %}
-<div class="form-group"><label>팀 선택</label>
-<select name="team_id">
+<div class="form-group"><label>팀 선택</label><select name="team_id" style="font-size:16px;padding:14px">
 <option value="">팀 없음</option>
-{% for t in teams %}
-<option value="{{ t.id }}">{{ t.name }}</option>
-{% endfor %}
-</select>
-</div>
+{% for t in teams %}<option value="{{ t.id }}">{{ t.name }}</option>{% endfor %}
+</select></div>
 {% endif %}
-<button type="submit" class="btn btn-primary btn-block btn-lg mt-2"><i class="ri-login-box-line"></i> 참가하기</button>
+<button class="btn btn-primary btn-lg" style="width:100%;margin-top:8px;font-size:16px;padding:16px;border-radius:14px">참가하기</button>
 </form>
-{% endif %}
 </div>
+<p style="text-align:center;font-size:12px;color:#94a3b8;margin-top:24px">THE TEAM COMPANY 팀빌딩 플랫폼</p>
 </div>
 {% endblock %}

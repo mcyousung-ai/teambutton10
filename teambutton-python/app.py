@@ -18,7 +18,17 @@ app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = secrets.token_hex(32)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading', ping_timeout=60, ping_interval=25)
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='gevent', ping_timeout=120, ping_interval=25, max_http_buffer_size=1024*1024, logger=False, engineio_logger=False)
+
+# Throttle mechanism for high-frequency events
+_last_emit = {}
+def throttled_emit(key, event, data, room, interval=0.5):
+    """Throttle emits to max once per interval seconds per key"""
+    now = time.time()
+    if key in _last_emit and (now - _last_emit[key]) < interval:
+        return
+    _last_emit[key] = now
+    socketio.emit(event, data, room=room)
 
 DATABASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'teambutton.db')
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')
@@ -800,7 +810,11 @@ def on_buzzer_count_click(data):
                 return
             socketio.emit('game:buzzer_count_click', {
                 'eventId':eid,'gameId':gid,'participantId':pid,'clicks':bc['clicks']
-            }, room=f'event:{eid}')
+            }, room=f'participant:{pid}')
+            # Throttled emit to host only
+            throttled_emit(f'bc:{eid}:{pid}', 'game:buzzer_count_click', {
+                'eventId':eid,'gameId':gid,'participantId':pid,'clicks':bc['clicks']
+            }, room=f'event:{eid}', interval=0.3)
             break
     db_exec("UPDATE games SET responses=? WHERE id=?", (json.dumps(responses, ensure_ascii=False), gid))
 
@@ -1204,12 +1218,14 @@ def serve_sound(filename):
 # Main
 # ============================================
 if __name__ == '__main__':
+    from gevent import monkey
+    monkey.patch_all()
     init_db()
+    port = int(os.environ.get('PORT', 8080))
     print("=" * 50)
     print("🔥 THE TEAM COMPANY 팀빌딩 플랫폼")
-    print("=" * 50)
-    print(f"🌐 http://localhost:5000")
+    print(f"🌐 http://0.0.0.0:{port}")
     print(f"📁 Database: {DATABASE}")
+    print(f"⚡ Async: gevent (1000+ connections)")
     print("=" * 50)
-    port = int(os.environ.get('PORT', 8080))
     socketio.run(app, host='0.0.0.0', port=port, debug=False, allow_unsafe_werkzeug=True)

@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% block title %}마이페이지{% endblock %}
 {% block content %}
-<div class="container" style="padding-top:24px;max-width:600px">
-<h1 style="font-size:24px;font-weight:700;margin-bottom:24px">마이페이지</h1>
-<form method="POST" class="card">
-<div class="form-group"><label>이메일</label><input type="email" value="{{ user.email }}" disabled></div>
-<div class="form-group"><label>이름</label><input type="text" name="name" value="{{ user.name }}" required></div>
-<div class="form-group"><label>전화번호</label><input type="tel" name="phone" value="{{ user.phone or '' }}"></div>
-<button type="submit" class="btn btn-primary">저장</button>
+<div style="max-width:500px;margin:0 auto;padding:20px">
+<h1 style="font-size:22px;font-weight:800;margin-bottom:20px">마이페이지</h1>
+<div class="card">
+<form method="POST">
+<div class="form-group"><label>이름</label><input name="name" value="{{ user.name }}"></div>
+<div class="form-group"><label>이메일</label><input name="email" value="{{ user.email }}" readonly style="background:var(--gray-450);cursor:not-allowed"></div>
+<button class="btn btn-primary" style="margin-top:8px">저장</button>
 </form>
+</div>
 </div>
 {% endblock %}

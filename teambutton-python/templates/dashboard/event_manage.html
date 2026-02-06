@@ -2,45 +2,39 @@
 {% block title %}이벤트 관리 - {{ event.title }}{% endblock %}
 {% block extra_css %}
 <style>
-.manage-wrap{max-width:1100px;margin:0 auto;padding:20px}
-.manage-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.manage-header h1{font-size:22px;font-weight:800}
-.manage-header .code{font-size:24px;font-weight:900;color:var(--point-500);letter-spacing:2px}
+.mg-wrap{max-width:1100px;margin:0 auto;padding:20px}
+.mg-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.mg-header h1{font-size:22px;font-weight:800}
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;box-shadow:var(--shadow-card)}
+@media(max-width:768px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:#fff;border:1px solid var(--gray-100);border-radius:14px;padding:16px;text-align:center;box-shadow:var(--shadow-card)}
 .stat-card .num{font-size:28px;font-weight:900;color:var(--point-500)}
-.stat-card .label{font-size:12px;color:var(--text3);font-weight:600;margin-top:2px}
-.manage-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid var(--border)}
-.manage-tab{padding:12px 20px;cursor:pointer;font-weight:600;font-size:14px;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-2px;transition:.2s}
-.manage-tab:hover{color:var(--text2)}
-.manage-tab.active{color:var(--point-500);border-bottom-color:var(--point-500)}
-.manage-content{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow-card)}
-.p-table{width:100%;font-size:13px}
-.p-table th{padding:10px 12px;background:var(--bg3);font-weight:600;color:var(--text2);text-align:left;border-bottom:1px solid var(--border)}
-.p-table td{padding:10px 12px;border-bottom:1px solid var(--bg3)}
-.p-table tr:hover{background:var(--indigo-50)}
-.team-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow-card)}
-.team-card .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.team-card .head h4{font-weight:700;font-size:15px}
-.team-card .score{font-size:24px;font-weight:900;color:var(--point-500)}
-.team-card .members{font-size:12px;color:var(--text3);margin-top:6px}
-.game-log{padding:10px 14px;border-bottom:1px solid var(--bg3);display:flex;justify-content:space-between;align-items:center;font-size:13px}
-.game-log .type{font-weight:600;display:flex;align-items:center;gap:6px}
-.game-log .meta{color:var(--text3);font-size:11px}
+.stat-card .label{font-size:12px;color:var(--neutral-100);font-weight:600;margin-top:2px}
+.mg-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid var(--gray-100)}
+.mg-tab{padding:12px 20px;cursor:pointer;font-weight:600;font-size:14px;color:var(--neutral-100);border-bottom:2px solid transparent;margin-bottom:-2px;transition:.2s}
+.mg-tab:hover{color:var(--neutral-200)}
+.mg-tab.active{color:var(--point-500);border-bottom-color:var(--point-500)}
+.mg-content{background:#fff;border:1px solid var(--gray-100);border-radius:16px;padding:20px;box-shadow:var(--shadow-card)}
+.p-table{width:100%;font-size:13px;border-collapse:collapse}
+.p-table th{padding:10px 12px;background:var(--gray-450);font-weight:600;color:var(--gray-500);text-align:left;border-bottom:1px solid var(--gray-100)}
+.p-table td{padding:10px 12px;border-bottom:1px solid var(--gray-50)}
+.p-table tr:hover{background:var(--point-50)}
+.team-card{background:#fff;border:1px solid var(--gray-100);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow-card)}
 .score-input{width:70px;padding:6px 8px;font-size:13px;text-align:center;border-radius:8px}
+.game-log{padding:10px 14px;border-bottom:1px solid var(--gray-50);display:flex;justify-content:space-between;align-items:center;font-size:13px}
 </style>
 {% endblock %}
 {% block content %}
-<div class="manage-wrap">
-<div class="manage-header">
+<div class="mg-wrap">
+<div class="mg-header">
 <div>
 <h1>{{ event.title }}</h1>
-<p class="text-sm text-muted">{{ event.company_name }} · {{ event.location or '' }}</p>
+<p style="font-size:13px;color:var(--neutral-100)">{{ event.company_name or '' }} · v2.0.0</p>
 </div>
 <div style="text-align:right">
-<div class="code">{{ event.code }}</div>
-<div class="flex gap-2 mt-2">
-<span class="badge badge-{{ 'success' if event.status == '진행중' else 'gray' }} badge-dot">{{ event.status }}</span>
+<div style="font-size:24px;font-weight:900;color:var(--point-500);letter-spacing:2px">{{ event.code }}</div>
+<div style="display:flex;gap:6px;margin-top:8px">
+<span class="badge badge-{{ 'success' if event.status == '진행중' else 'gray' }}">{{ event.status }}</span>
 <a href="/event/host/{{ event.id }}" class="btn btn-sm btn-primary" target="_blank"><i class="ri-slideshow-line"></i> 호스트</a>
 <a href="/event/monitor/{{ event.id }}" class="btn btn-sm btn-outline" target="_blank"><i class="ri-tv-line"></i> 모니터</a>
 </div>
@@ -50,104 +44,96 @@
 <div class="stat-card"><div class="num">{{ participants|length }}</div><div class="label">참가자</div></div>
 <div class="stat-card"><div class="num">{{ teams|length }}</div><div class="label">팀</div></div>
 <div class="stat-card"><div class="num">{{ games|length }}</div><div class="label">게임</div></div>
-<div class="stat-card"><div class="num">{{ event.status }}</div><div class="label">상태</div></div>
+<div class="stat-card"><div class="num" style="font-size:18px">{{ event.status }}</div><div class="label">상태</div></div>
 </div>
-<div class="manage-tabs">
-<div class="manage-tab active" onclick="switchTab(this,'tabPart')">참가자 ({{ participants|length }})</div>
-<div class="manage-tab" onclick="switchTab(this,'tabTeam')">팀 ({{ teams|length }})</div>
-<div class="manage-tab" onclick="switchTab(this,'tabGame')">게임 ({{ games|length }})</div>
-<div class="manage-tab" onclick="switchTab(this,'tabSet')">설정</div>
+<div class="mg-tabs" id="mgTabs">
+<div class="mg-tab active" data-tab="tabPart">참가자 ({{ participants|length }})</div>
+<div class="mg-tab" data-tab="tabTeam">팀 ({{ teams|length }})</div>
+<div class="mg-tab" data-tab="tabGame">게임 ({{ games|length }})</div>
+<div class="mg-tab" data-tab="tabSet">설정</div>
 </div>
-<!-- Participants Tab -->
-<div id="tabPart" class="manage-content">
+<div id="tabPart" class="mg-content">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
 <h3 style="font-weight:700">참가자 관리</h3>
-<button class="btn btn-sm btn-primary" onclick="showAddParticipant()"><i class="ri-user-add-line"></i> 참가자 추가</button>
+<button class="btn btn-sm btn-primary" onclick="document.getElementById('addPF').classList.toggle('hidden')"><i class="ri-user-add-line"></i> 참가자 추가</button>
 </div>
-<div id="addPForm" class="hidden mb-4" style="background:var(--bg3);padding:14px;border-radius:12px">
-<div class="form-row"><div class="form-group"><label>이름</label><input id="newPName" placeholder="이름"></div><div class="form-group"><label>팀</label><select id="newPTeam"><option value="">팀 없음</option>{% for t in teams %}<option value="{{ t.id }}">{{ t.name }}</option>{% endfor %}</select></div></div>
-<button class="btn btn-sm btn-primary" onclick="addParticipant()">추가</button>
+<div id="addPF" class="hidden" style="background:var(--gray-450);padding:14px;border-radius:12px;margin-bottom:14px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="form-group"><label>이름</label><input id="newPN" placeholder="이름"></div><div class="form-group"><label>팀</label><select id="newPT"><option value="">팀 없음</option>{% for t in teams %}<option value="{{ t.id }}">{{ t.name }}</option>{% endfor %}</select></div></div>
+<button class="btn btn-sm btn-primary" onclick="addP()">추가</button>
 </div>
 <table class="p-table">
 <thead><tr><th>#</th><th>이름</th><th>팀</th><th>점수</th><th>점수 변경</th><th></th></tr></thead>
-<tbody id="pTableBody">
+<tbody>
 {% for p in participants %}
 <tr>
 <td>{{ loop.index }}</td>
 <td style="font-weight:600">{{ p.name }}</td>
 <td>{{ p.team_name or '-' }}</td>
 <td style="font-weight:700;color:var(--point-500)">{{ p.score }}</td>
-<td><div class="flex gap-2"><input type="number" class="score-input" id="ps{{ p.id }}" value="0"><button class="btn btn-sm btn-primary" onclick="updateScore({{ p.id }})">적용</button></div></td>
-<td><button class="btn btn-ghost btn-sm" onclick="deleteParticipant({{ p.id }})"><i class="ri-delete-bin-line" style="color:var(--danger)"></i></button></td>
+<td><div style="display:flex;gap:4px"><input type="number" class="score-input" id="ps{{ p.id }}" value="0"><button class="btn btn-sm btn-primary" onclick="updPS({{ p.id }})">적용</button></div></td>
+<td><button class="btn btn-ghost btn-sm" onclick="delP({{ p.id }})"><i class="ri-delete-bin-line" style="color:var(--accent)"></i></button></td>
 </tr>
 {% endfor %}
 </tbody>
 </table>
 </div>
-<!-- Teams Tab -->
-<div id="tabTeam" class="manage-content hidden">
+<div id="tabTeam" class="mg-content hidden">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
 <h3 style="font-weight:700">팀 관리</h3>
-<button class="btn btn-sm btn-primary" onclick="showAddTeam()"><i class="ri-team-line"></i> 팀 추가</button>
+<button class="btn btn-sm btn-primary" onclick="document.getElementById('addTF').classList.toggle('hidden')"><i class="ri-team-line"></i> 팀 추가</button>
 </div>
-<div id="addTForm" class="hidden mb-4" style="background:var(--bg3);padding:14px;border-radius:12px">
-<div class="form-group"><label>팀 이름</label><input id="newTName" placeholder="팀 이름"></div>
-<button class="btn btn-sm btn-primary" onclick="addTeam()">추가</button>
+<div id="addTF" class="hidden" style="background:var(--gray-450);padding:14px;border-radius:12px;margin-bottom:14px">
+<div class="form-group"><label>팀 이름</label><input id="newTN" placeholder="팀 이름"></div>
+<button class="btn btn-sm btn-primary" onclick="addT()">추가</button>
 </div>
 {% for t in teams %}
 <div class="team-card">
-<div class="head"><h4>{{ t.name }}</h4><div class="score">{{ t.score }}점</div></div>
-<div class="flex gap-2"><input type="number" class="score-input" id="ts{{ t.id }}" value="0"><button class="btn btn-sm btn-primary" onclick="updateTeamScore({{ t.id }})">점수 변경</button><button class="btn btn-sm btn-danger" onclick="deleteTeam({{ t.id }})">삭제</button></div>
-<div class="members">멤버: {{ participants|selectattr('team_id','equalto',t.id)|map(attribute='name')|join(', ') or '없음' }}</div>
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div><h4 style="font-weight:700;font-size:15px">{{ t.name }}</h4></div>
+<div style="font-size:24px;font-weight:900;color:var(--point-500)">{{ t.score }}점</div>
+</div>
+<div style="display:flex;gap:6px;margin-top:10px"><input type="number" class="score-input" id="ts{{ t.id }}" value="0"><button class="btn btn-sm btn-primary" onclick="updTS({{ t.id }})">점수 변경</button><button class="btn btn-sm btn-danger" onclick="delT({{ t.id }})">삭제</button></div>
+<div style="font-size:12px;color:var(--neutral-100);margin-top:8px">멤버: {% for p in participants if p.team_id == t.id %}{{ p.name }}{% if not loop.last %}, {% endif %}{% else %}없음{% endfor %}</div>
 </div>
 {% endfor %}
 </div>
-<!-- Games Tab -->
-<div id="tabGame" class="manage-content hidden">
+<div id="tabGame" class="mg-content hidden">
 <h3 style="font-weight:700;margin-bottom:14px">게임 히스토리</h3>
 {% for g in games %}
 <div class="game-log">
-<div class="type"><span class="badge badge-primary">{{ g.type }}</span><span>{{ g.status }}</span></div>
-<div class="meta">{{ g.started_at or '' }}</div>
+<div style="display:flex;align-items:center;gap:8px"><span class="badge badge-primary">{{ g.type }}</span><span>{{ g.status }}</span></div>
+<div style="color:var(--neutral-100);font-size:11px">{{ g.started_at or '' }}</div>
 </div>
 {% endfor %}
-{% if not games %}<p class="text-muted text-center p-4">아직 진행된 게임이 없습니다</p>{% endif %}
+{% if not games %}<p style="color:var(--neutral-100);text-align:center;padding:40px">아직 진행된 게임이 없습니다</p>{% endif %}
 </div>
-<!-- Settings Tab -->
-<div id="tabSet" class="manage-content hidden">
+<div id="tabSet" class="mg-content hidden">
 <h3 style="font-weight:700;margin-bottom:14px">이벤트 설정</h3>
 <form method="POST" action="/dashboard/event/{{ event.id }}/edit">
 <div class="form-group"><label>이벤트 제목</label><input name="title" value="{{ event.title }}"></div>
-<div class="form-row"><div class="form-group"><label>회사/단체명</label><input name="company_name" value="{{ event.company_name or '' }}"></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="form-group"><label>회사/단체명</label><input name="company_name" value="{{ event.company_name or '' }}"></div>
 <div class="form-group"><label>장소</label><input name="location" value="{{ event.location or '' }}"></div></div>
 <div class="form-group"><label>설명</label><textarea name="description">{{ event.description or '' }}</textarea></div>
-<div class="form-row"><div class="form-group"><label>최대 참가자</label><input type="number" name="max_participants" value="{{ event.max_participants or 1000 }}"></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="form-group"><label>최대 참가자</label><input type="number" name="max_participants" value="{{ event.max_participants or 1000 }}"></div>
 <div class="form-group"><label>팀 사용</label><select name="has_teams"><option value="1" {{ 'selected' if event.has_teams else '' }}>사용</option><option value="0" {{ 'selected' if not event.has_teams else '' }}>미사용</option></select></div></div>
-<button class="btn btn-primary mt-2">저장</button>
+<button class="btn btn-primary" style="margin-top:8px">저장</button>
 </form>
 </div>
 </div>
 <script>
-function switchTab(el,id){
-document.querySelectorAll('.manage-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
-document.querySelectorAll('.manage-content').forEach(c=>c.classList.add('hidden'));
-document.getElementById(id).classList.remove('hidden');
-}
-function showAddParticipant(){document.getElementById('addPForm').classList.toggle('hidden')}
-function showAddTeam(){document.getElementById('addTForm').classList.toggle('hidden')}
-function addParticipant(){
-const name=document.getElementById('newPName').value;if(!name)return;
-fetch('/api/event/{{ event.id }}/participant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,team_id:document.getElementById('newPTeam').value||null})}).then(()=>location.reload());
-}
-function addTeam(){
-const name=document.getElementById('newTName').value;if(!name)return;
-fetch('/api/event/{{ event.id }}/team',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name})}).then(()=>location.reload());
-}
-function deleteParticipant(id){if(confirm('삭제?'))fetch('/api/event/{{ event.id }}/participant/'+id,{method:'DELETE'}).then(()=>location.reload())}
-function deleteTeam(id){if(confirm('삭제?'))fetch('/api/event/{{ event.id }}/team/'+id,{method:'DELETE'}).then(()=>location.reload())}
-function updateScore(pid){const v=parseInt(document.getElementById('ps'+pid)?.value)||0;
-fetch('/api/event/{{ event.id }}/participant/'+pid,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({score_delta:v})}).then(()=>location.reload())}
-function updateTeamScore(tid){const v=parseInt(document.getElementById('ts'+tid)?.value)||0;
-fetch('/api/event/{{ event.id }}/team/'+tid,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({score_delta:v})}).then(()=>location.reload())}
+document.querySelectorAll('.mg-tab').forEach(function(tab){
+tab.onclick=function(){
+document.querySelectorAll('.mg-tab').forEach(function(t){t.classList.remove('active')});
+this.classList.add('active');
+document.querySelectorAll('.mg-content').forEach(function(c){c.classList.add('hidden')});
+document.getElementById(this.dataset.tab).classList.remove('hidden');
+}});
+var eid={{ event.id }};
+function addP(){var n=document.getElementById('newPN').value;if(!n)return;fetch('/api/event/'+eid+'/participant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,team_id:document.getElementById('newPT').value||null})}).then(function(){location.reload()})}
+function addT(){var n=document.getElementById('newTN').value;if(!n)return;fetch('/api/event/'+eid+'/team',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n})}).then(function(){location.reload()})}
+function delP(id){if(confirm('삭제?'))fetch('/api/event/'+eid+'/participant/'+id,{method:'DELETE'}).then(function(){location.reload()})}
+function delT(id){if(confirm('삭제?'))fetch('/api/event/'+eid+'/team/'+id,{method:'DELETE'}).then(function(){location.reload()})}
+function updPS(pid){var v=parseInt(document.getElementById('ps'+pid).value)||0;fetch('/api/event/'+eid+'/participant/'+pid,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({score_delta:v})}).then(function(){location.reload()})}
+function updTS(tid){var v=parseInt(document.getElementById('ts'+tid).value)||0;fetch('/api/event/'+eid+'/team/'+tid,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({score_delta:v})}).then(function(){location.reload()})}
 </script>
 {% endblock %}

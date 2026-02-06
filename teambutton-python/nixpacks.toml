@@ -1,5 +1,2 @@
 [start]
 cmd = "python app.py"
-
-[variables]
-PORT = "5000"

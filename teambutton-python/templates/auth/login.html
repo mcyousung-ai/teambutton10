@@ -1,20 +1,21 @@
 {% extends "base.html" %}
 {% block nav %}{% endblock %}
-{% block title %}로그인 - THE TEAM COMPANY{% endblock %}
+{% block title %}로그인{% endblock %}
 {% block content %}
-<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
-<div style="max-width:400px;width:100%">
-<div class="text-center mb-4">
-<a href="/"><i class="ri-team-fill" style="font-size:40px;color:var(--primary-light)"></i></a>
-<h2 style="margin-top:8px">로그인</h2>
+<div style="max-width:400px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:24px">
+<div style="text-align:center;margin-bottom:32px">
+<div style="font-size:36px;margin-bottom:8px">🎮</div>
+<h1 style="font-size:28px;font-weight:900;background:linear-gradient(135deg,var(--point-500),#7C3AED);-webkit-background-clip:text;-webkit-text-fill-color:transparent">팀버튼</h1>
+<p style="color:var(--neutral-100);font-size:14px;margin-top:4px">THE TEAM COMPANY · v2.0.0</p>
 </div>
-{% if error %}<div style="background:rgba(239,68,68,.1);border:1px solid var(--danger);padding:10px;border-radius:var(--radius-sm);margin-bottom:16px;color:var(--danger);font-size:14px">{{ error }}</div>{% endif %}
-<form method="POST" class="card">
-<div class="form-group"><label>이메일</label><input type="email" name="email" required autofocus></div>
-<div class="form-group"><label>비밀번호</label><input type="password" name="password" required></div>
-<button type="submit" class="btn btn-primary btn-block btn-lg mt-2">로그인</button>
+<div class="card">
+{% if error %}<div style="background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:10px;padding:10px;font-size:13px;margin-bottom:14px">{{ error }}</div>{% endif %}
+<form method="POST">
+<div class="form-group"><label>이메일</label><input name="email" type="email" required placeholder="email@example.com"></div>
+<div class="form-group"><label>비밀번호</label><input name="password" type="password" required placeholder="비밀번호"></div>
+<button class="btn btn-primary btn-lg" style="width:100%">로그인</button>
 </form>
-<p class="text-center text-muted text-sm mt-2">계정이 없으신가요? <a href="/auth/register">회원가입</a></p>
+<p style="text-align:center;margin-top:14px;font-size:13px;color:var(--neutral-100)">계정이 없으신가요? <a href="/auth/register" style="color:var(--point-500);font-weight:600">회원가입</a></p>
 </div>
 </div>
 {% endblock %}

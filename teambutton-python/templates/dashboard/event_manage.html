@@ -1,149 +1,153 @@
 {% extends "base.html" %}
-{% block title %}{{ event.title }} - 관리{% endblock %}
+{% block title %}이벤트 관리 - {{ event.title }}{% endblock %}
+{% block extra_css %}
+<style>
+.manage-wrap{max-width:1100px;margin:0 auto;padding:20px}
+.manage-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.manage-header h1{font-size:22px;font-weight:800}
+.manage-header .code{font-size:24px;font-weight:900;color:var(--point-500);letter-spacing:2px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;box-shadow:var(--shadow-card)}
+.stat-card .num{font-size:28px;font-weight:900;color:var(--point-500)}
+.stat-card .label{font-size:12px;color:var(--text3);font-weight:600;margin-top:2px}
+.manage-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid var(--border)}
+.manage-tab{padding:12px 20px;cursor:pointer;font-weight:600;font-size:14px;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-2px;transition:.2s}
+.manage-tab:hover{color:var(--text2)}
+.manage-tab.active{color:var(--point-500);border-bottom-color:var(--point-500)}
+.manage-content{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow-card)}
+.p-table{width:100%;font-size:13px}
+.p-table th{padding:10px 12px;background:var(--bg3);font-weight:600;color:var(--text2);text-align:left;border-bottom:1px solid var(--border)}
+.p-table td{padding:10px 12px;border-bottom:1px solid var(--bg3)}
+.p-table tr:hover{background:var(--indigo-50)}
+.team-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow-card)}
+.team-card .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.team-card .head h4{font-weight:700;font-size:15px}
+.team-card .score{font-size:24px;font-weight:900;color:var(--point-500)}
+.team-card .members{font-size:12px;color:var(--text3);margin-top:6px}
+.game-log{padding:10px 14px;border-bottom:1px solid var(--bg3);display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.game-log .type{font-weight:600;display:flex;align-items:center;gap:6px}
+.game-log .meta{color:var(--text3);font-size:11px}
+.score-input{width:70px;padding:6px 8px;font-size:13px;text-align:center;border-radius:8px}
+</style>
+{% endblock %}
 {% block content %}
-<div class="container" style="padding:24px 16px 40px">
-<div class="flex justify-between items-center mb-4" style="flex-wrap:wrap;gap:12px">
+<div class="manage-wrap">
+<div class="manage-header">
 <div>
-<div class="flex items-center gap-2">
-<h1 style="font-size:22px;font-weight:700">{{ event.title or '제목 없음' }}</h1>
-<span class="badge {% if event.status == '진행중' %}badge-success{% elif event.status == '종료' %}badge-danger{% else %}badge-gray{% endif %}">{{ event.status }}</span>
+<h1>{{ event.title }}</h1>
+<p class="text-sm text-muted">{{ event.company_name }} · {{ event.location or '' }}</p>
 </div>
-<p class="text-sm text-muted mt-2">참가 코드: <strong style="color:var(--primary-light);font-size:18px;letter-spacing:2px">{{ event.code }}</strong></p>
-</div>
-<div class="flex gap-2" style="flex-wrap:wrap">
-<a href="/event/host/{{ event.id }}" class="btn btn-primary" target="_blank"><i class="ri-slideshow-line"></i> 호스트 화면</a>
-<a href="/event/monitor/{{ event.id }}" class="btn btn-outline" target="_blank"><i class="ri-tv-line"></i> 모니터</a>
-<a href="/dashboard/event/{{ event.id }}/edit" class="btn btn-outline"><i class="ri-edit-line"></i> 수정</a>
-<a href="/dashboard/event/{{ event.id }}/result" class="btn btn-outline"><i class="ri-bar-chart-line"></i> 결과</a>
+<div style="text-align:right">
+<div class="code">{{ event.code }}</div>
+<div class="flex gap-2 mt-2">
+<span class="badge badge-{{ 'success' if event.status == '진행중' else 'gray' }} badge-dot">{{ event.status }}</span>
+<a href="/event/host/{{ event.id }}" class="btn btn-sm btn-primary" target="_blank"><i class="ri-slideshow-line"></i> 호스트</a>
+<a href="/event/monitor/{{ event.id }}" class="btn btn-sm btn-outline" target="_blank"><i class="ri-tv-line"></i> 모니터</a>
 </div>
 </div>
-
-<div class="grid" style="grid-template-columns:1fr 1fr;gap:16px">
-<div class="card"><div class="stat"><div class="stat-value">{{ participants|length }}</div><div class="stat-label">참가자</div></div></div>
-<div class="card"><div class="stat"><div class="stat-value">{{ teams|length }}</div><div class="stat-label">팀</div></div></div>
 </div>
-
-<div class="tabs">
-<div class="tab active" onclick="switchTab('participants')">참가자 ({{ participants|length }})</div>
-<div class="tab" onclick="switchTab('teams')">팀 ({{ teams|length }})</div>
-<div class="tab" onclick="switchTab('games')">게임 ({{ games|length }})</div>
-<div class="tab" onclick="switchTab('settings')">설정</div>
+<div class="stat-grid">
+<div class="stat-card"><div class="num">{{ participants|length }}</div><div class="label">참가자</div></div>
+<div class="stat-card"><div class="num">{{ teams|length }}</div><div class="label">팀</div></div>
+<div class="stat-card"><div class="num">{{ games|length }}</div><div class="label">게임</div></div>
+<div class="stat-card"><div class="num">{{ event.status }}</div><div class="label">상태</div></div>
 </div>
-
-<!-- Participants -->
-<div id="tab-participants" class="tab-content active">
-<div class="card">
-<table>
-<thead><tr><th>#</th><th>이름</th><th>팀</th><th>점수</th><th>상태</th><th></th></tr></thead>
-<tbody>
+<div class="manage-tabs">
+<div class="manage-tab active" onclick="switchTab(this,'tabPart')">참가자 ({{ participants|length }})</div>
+<div class="manage-tab" onclick="switchTab(this,'tabTeam')">팀 ({{ teams|length }})</div>
+<div class="manage-tab" onclick="switchTab(this,'tabGame')">게임 ({{ games|length }})</div>
+<div class="manage-tab" onclick="switchTab(this,'tabSet')">설정</div>
+</div>
+<!-- Participants Tab -->
+<div id="tabPart" class="manage-content">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+<h3 style="font-weight:700">참가자 관리</h3>
+<button class="btn btn-sm btn-primary" onclick="showAddParticipant()"><i class="ri-user-add-line"></i> 참가자 추가</button>
+</div>
+<div id="addPForm" class="hidden mb-4" style="background:var(--bg3);padding:14px;border-radius:12px">
+<div class="form-row"><div class="form-group"><label>이름</label><input id="newPName" placeholder="이름"></div><div class="form-group"><label>팀</label><select id="newPTeam"><option value="">팀 없음</option>{% for t in teams %}<option value="{{ t.id }}">{{ t.name }}</option>{% endfor %}</select></div></div>
+<button class="btn btn-sm btn-primary" onclick="addParticipant()">추가</button>
+</div>
+<table class="p-table">
+<thead><tr><th>#</th><th>이름</th><th>팀</th><th>점수</th><th>점수 변경</th><th></th></tr></thead>
+<tbody id="pTableBody">
 {% for p in participants %}
 <tr>
-<td>{{ p.code }}</td>
-<td>{{ p.name }}</td>
+<td>{{ loop.index }}</td>
+<td style="font-weight:600">{{ p.name }}</td>
 <td>{{ p.team_name or '-' }}</td>
-<td>{{ p.score }}</td>
-<td><span class="badge {% if p.status == '참가' %}badge-success{% else %}badge-gray{% endif %}">{{ p.status }}</span></td>
-<td>
-<button class="btn btn-sm btn-outline" onclick="editParticipant({{ p.id }}, '{{ p.name }}', {{ p.score }}, {{ p.team_id or 'null' }})"><i class="ri-edit-line"></i></button>
-<button class="btn btn-sm btn-danger" onclick="deleteParticipant({{ p.id }})"><i class="ri-delete-bin-line"></i></button>
-</td>
+<td style="font-weight:700;color:var(--point-500)">{{ p.score }}</td>
+<td><div class="flex gap-2"><input type="number" class="score-input" id="ps{{ p.id }}" value="0"><button class="btn btn-sm btn-primary" onclick="updateScore({{ p.id }})">적용</button></div></td>
+<td><button class="btn btn-ghost btn-sm" onclick="deleteParticipant({{ p.id }})"><i class="ri-delete-bin-line" style="color:var(--danger)"></i></button></td>
 </tr>
 {% endfor %}
-{% if not participants %}<tr><td colspan="6" class="text-center text-muted">참가자가 없습니다</td></tr>{% endif %}
 </tbody>
 </table>
 </div>
+<!-- Teams Tab -->
+<div id="tabTeam" class="manage-content hidden">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+<h3 style="font-weight:700">팀 관리</h3>
+<button class="btn btn-sm btn-primary" onclick="showAddTeam()"><i class="ri-team-line"></i> 팀 추가</button>
 </div>
-
-<!-- Teams -->
-<div id="tab-teams" class="tab-content">
-<div class="card">
-<div class="flex justify-between items-center mb-4">
-<h3>팀 목록</h3>
-<button class="btn btn-sm btn-primary" onclick="createTeam()"><i class="ri-add-line"></i> 팀 추가</button>
+<div id="addTForm" class="hidden mb-4" style="background:var(--bg3);padding:14px;border-radius:12px">
+<div class="form-group"><label>팀 이름</label><input id="newTName" placeholder="팀 이름"></div>
+<button class="btn btn-sm btn-primary" onclick="addTeam()">추가</button>
 </div>
 {% for t in teams %}
-<div class="flex justify-between items-center p-2" style="border-bottom:1px solid var(--border)">
-<div>
-<strong>{{ t.name }}</strong>
-<span class="text-sm text-muted ml-2">점수: {{ t.score }}</span>
-</div>
-<div class="flex gap-2">
-<button class="btn btn-sm btn-outline" onclick="editTeam({{ t.id }},'{{ t.name }}')"><i class="ri-edit-line"></i></button>
-<button class="btn btn-sm btn-danger" onclick="deleteTeam({{ t.id }})"><i class="ri-delete-bin-line"></i></button>
-</div>
+<div class="team-card">
+<div class="head"><h4>{{ t.name }}</h4><div class="score">{{ t.score }}점</div></div>
+<div class="flex gap-2"><input type="number" class="score-input" id="ts{{ t.id }}" value="0"><button class="btn btn-sm btn-primary" onclick="updateTeamScore({{ t.id }})">점수 변경</button><button class="btn btn-sm btn-danger" onclick="deleteTeam({{ t.id }})">삭제</button></div>
+<div class="members">멤버: {{ participants|selectattr('team_id','equalto',t.id)|map(attribute='name')|join(', ') or '없음' }}</div>
 </div>
 {% endfor %}
-{% if not teams %}<p class="text-muted text-center p-4">팀이 없습니다</p>{% endif %}
 </div>
+<!-- Games Tab -->
+<div id="tabGame" class="manage-content hidden">
+<h3 style="font-weight:700;margin-bottom:14px">게임 히스토리</h3>
+{% for g in games %}
+<div class="game-log">
+<div class="type"><span class="badge badge-primary">{{ g.type }}</span><span>{{ g.status }}</span></div>
+<div class="meta">{{ g.started_at or '' }}</div>
 </div>
-
-<!-- Games -->
-<div id="tab-games" class="tab-content">
-<div class="card">
-<table>
-<thead><tr><th>게임</th><th>상태</th><th>시작</th><th>종료</th></tr></thead>
-<tbody>
-{% for gm in games %}
-<tr>
-<td>{{ gm.type }}</td>
-<td><span class="badge {% if gm.status == '진행중' %}badge-success{% elif gm.status == '종료' %}badge-danger{% else %}badge-gray{% endif %}">{{ gm.status }}</span></td>
-<td class="text-sm">{{ gm.started_at or '-' }}</td>
-<td class="text-sm">{{ gm.ended_at or '-' }}</td>
-</tr>
 {% endfor %}
-{% if not games %}<tr><td colspan="4" class="text-center text-muted">게임 기록이 없습니다</td></tr>{% endif %}
-</tbody>
-</table>
+{% if not games %}<p class="text-muted text-center p-4">아직 진행된 게임이 없습니다</p>{% endif %}
 </div>
-</div>
-
-<!-- Settings -->
-<div id="tab-settings" class="tab-content">
-<div class="card">
-<h3 class="mb-4">이벤트 설정</h3>
-<div class="form-group"><label>참가 코드</label>
-<div class="flex gap-2 items-center">
-<input type="text" value="{{ event.code }}" readonly style="flex:1;font-size:20px;letter-spacing:3px;text-align:center">
-<button class="btn btn-outline btn-sm" onclick="navigator.clipboard.writeText('{{ event.code }}');showToast('복사됨!')">복사</button>
-<button class="btn btn-outline btn-sm" onclick="navigator.clipboard.writeText(location.origin+'/join/{{ event.code }}');showToast('링크 복사됨!')">링크 복사</button>
-</div>
-</div>
-<div class="mt-4" style="border-top:1px solid var(--border);padding-top:16px">
-<form method="POST" action="/dashboard/event/{{ event.id }}/delete" onsubmit="return confirm('정말 삭제하시겠습니까?')">
-<button type="submit" class="btn btn-danger"><i class="ri-delete-bin-line"></i> 이벤트 삭제</button>
+<!-- Settings Tab -->
+<div id="tabSet" class="manage-content hidden">
+<h3 style="font-weight:700;margin-bottom:14px">이벤트 설정</h3>
+<form method="POST" action="/dashboard/event/{{ event.id }}/edit">
+<div class="form-group"><label>이벤트 제목</label><input name="title" value="{{ event.title }}"></div>
+<div class="form-row"><div class="form-group"><label>회사/단체명</label><input name="company_name" value="{{ event.company_name or '' }}"></div>
+<div class="form-group"><label>장소</label><input name="location" value="{{ event.location or '' }}"></div></div>
+<div class="form-group"><label>설명</label><textarea name="description">{{ event.description or '' }}</textarea></div>
+<div class="form-row"><div class="form-group"><label>최대 참가자</label><input type="number" name="max_participants" value="{{ event.max_participants or 1000 }}"></div>
+<div class="form-group"><label>팀 사용</label><select name="has_teams"><option value="1" {{ 'selected' if event.has_teams else '' }}>사용</option><option value="0" {{ 'selected' if not event.has_teams else '' }}>미사용</option></select></div></div>
+<button class="btn btn-primary mt-2">저장</button>
 </form>
 </div>
 </div>
-</div>
-</div>
-
 <script>
-const EVENT_ID = {{ event.id }};
-const TEAMS = {{ teams|tojson }};
-function switchTab(name) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-    document.getElementById('tab-'+name).classList.add('active');
-    event.target.classList.add('active');
+function switchTab(el,id){
+document.querySelectorAll('.manage-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+document.querySelectorAll('.manage-content').forEach(c=>c.classList.add('hidden'));
+document.getElementById(id).classList.remove('hidden');
 }
-function createTeam() {
-    const name = prompt('팀 이름:');
-    if (name) fetchJSON(`/api/event/${EVENT_ID}/team`, {method:'POST', body:{name}}).then(() => location.reload());
+function showAddParticipant(){document.getElementById('addPForm').classList.toggle('hidden')}
+function showAddTeam(){document.getElementById('addTForm').classList.toggle('hidden')}
+function addParticipant(){
+const name=document.getElementById('newPName').value;if(!name)return;
+fetch('/api/event/{{ event.id }}/participant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,team_id:document.getElementById('newPTeam').value||null})}).then(()=>location.reload());
 }
-function editTeam(id, name) {
-    const newName = prompt('팀 이름:', name);
-    if (newName) fetchJSON(`/api/event/${EVENT_ID}/team/${id}`, {method:'PUT', body:{name:newName}}).then(() => location.reload());
+function addTeam(){
+const name=document.getElementById('newTName').value;if(!name)return;
+fetch('/api/event/{{ event.id }}/team',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name})}).then(()=>location.reload());
 }
-function deleteTeam(id) {
-    if (confirm('팀을 삭제하시겠습니까?')) fetchJSON(`/api/event/${EVENT_ID}/team/${id}`, {method:'DELETE'}).then(() => location.reload());
-}
-function editParticipant(id, name, score, teamId) {
-    const newScore = prompt('점수:', score);
-    if (newScore !== null) fetchJSON(`/api/event/${EVENT_ID}/participant/${id}`, {method:'PUT', body:{score:parseInt(newScore)}}).then(() => location.reload());
-}
-function deleteParticipant(id) {
-    if (confirm('참가자를 삭제하시겠습니까?')) fetchJSON(`/api/event/${EVENT_ID}/participant/${id}`, {method:'DELETE'}).then(() => location.reload());
-}
+function deleteParticipant(id){if(confirm('삭제?'))fetch('/api/event/{{ event.id }}/participant/'+id,{method:'DELETE'}).then(()=>location.reload())}
+function deleteTeam(id){if(confirm('삭제?'))fetch('/api/event/{{ event.id }}/team/'+id,{method:'DELETE'}).then(()=>location.reload())}
+function updateScore(pid){const v=parseInt(document.getElementById('ps'+pid)?.value)||0;
+fetch('/api/event/{{ event.id }}/participant/'+pid,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({score_delta:v})}).then(()=>location.reload())}
+function updateTeamScore(tid){const v=parseInt(document.getElementById('ts'+tid)?.value)||0;
+fetch('/api/event/{{ event.id }}/team/'+tid,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({score_delta:v})}).then(()=>location.reload())}
 </script>
 {% endblock %}

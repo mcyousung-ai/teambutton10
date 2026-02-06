@@ -1,34 +1,30 @@
 {% extends "base.html" %}
-{% block title %}대시보드 - THE TEAM COMPANY{% endblock %}
+{% block title %}대시보드{% endblock %}
 {% block content %}
-<div class="container" style="padding-top:24px;padding-bottom:40px">
-<div class="flex justify-between items-center mb-4">
-<h1 style="font-size:24px;font-weight:700">내 이벤트</h1>
+<div style="max-width:1000px;margin:0 auto;padding:20px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+<h1 style="font-size:24px;font-weight:800">내 이벤트</h1>
 <a href="/dashboard/event/create" class="btn btn-primary"><i class="ri-add-line"></i> 새 이벤트</a>
 </div>
-{% if events %}
-<div class="grid grid-3">
+{% if not events %}
+<div class="empty" style="background:var(--bg2);border-radius:16px;border:1px solid var(--border)"><i class="ri-calendar-event-line"></i><p>아직 이벤트가 없습니다</p><a href="/dashboard/event/create" class="btn btn-primary mt-4">첫 이벤트 만들기</a></div>
+{% endif %}
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px">
 {% for e in events %}
-<div class="card" style="cursor:pointer" onclick="location.href='/dashboard/event/{{e.id}}/manage'">
-<div class="flex justify-between items-center mb-2">
-<span class="badge {% if e.status == '진행중' %}badge-success{% elif e.status == '종료' %}badge-danger{% else %}badge-gray{% endif %}">{{ e.status }}</span>
-<span class="text-sm text-muted">{{ e.code }}</span>
+<div class="card" style="transition:all .2s;cursor:pointer" onclick="location.href='/dashboard/event/{{ e.id }}/manage'">
+<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+<div><h3 style="font-size:16px;font-weight:700">{{ e.title }}</h3><p class="text-sm text-muted">{{ e.company_name or '' }}</p></div>
+<span class="badge badge-{{ 'success' if e.status == '진행중' else 'warning' if e.status == '모집중' else 'gray' }} badge-dot">{{ e.status }}</span>
 </div>
-<h3 style="font-size:16px;margin-bottom:4px">{{ e.title or '제목 없음' }}</h3>
-<p class="text-sm text-muted">{{ e.company_name }}</p>
-<div class="flex justify-between items-center mt-4 text-sm text-muted">
-<span><i class="ri-map-pin-line"></i> {{ e.location or '-' }}</span>
-<span><i class="ri-group-line"></i> {{ e.max_participants }}명</span>
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:20px;font-weight:900;color:var(--point-500);letter-spacing:1px">{{ e.code }}</span>
+<div class="flex gap-2">
+<a href="/event/host/{{ e.id }}" class="btn btn-sm btn-primary" onclick="event.stopPropagation()">호스트</a>
+<a href="/dashboard/event/{{ e.id }}/manage" class="btn btn-sm btn-outline" onclick="event.stopPropagation()">관리</a>
+</div>
 </div>
 </div>
 {% endfor %}
 </div>
-{% else %}
-<div class="empty">
-<i class="ri-calendar-event-line"></i>
-<p>아직 이벤트가 없습니다</p>
-<a href="/dashboard/event/create" class="btn btn-primary mt-4"><i class="ri-add-line"></i> 첫 이벤트 만들기</a>
-</div>
-{% endif %}
 </div>
 {% endblock %}

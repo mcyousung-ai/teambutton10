@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block nav %}{% endblock %}
+{% block title %}회원가입 - THE TEAM COMPANY{% endblock %}
+{% block content %}
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
+<div style="max-width:400px;width:100%">
+<div class="text-center mb-4">
+<a href="/"><i class="ri-team-fill" style="font-size:40px;color:var(--primary-light)"></i></a>
+<h2 style="margin-top:8px">회원가입</h2>
+</div>
+{% if error %}<div style="background:rgba(239,68,68,.1);border:1px solid var(--danger);padding:10px;border-radius:var(--radius-sm);margin-bottom:16px;color:var(--danger);font-size:14px">{{ error }}</div>{% endif %}
+<form method="POST" class="card">
+<div class="form-group"><label>이메일</label><input type="email" name="email" required autofocus></div>
+<div class="form-group"><label>이름</label><input type="text" name="name" required></div>
+<div class="form-group"><label>비밀번호 (6자 이상)</label><input type="password" name="password" required minlength="6"></div>
+<div class="form-group"><label>비밀번호 확인</label><input type="password" name="password2" required minlength="6"></div>
+<button type="submit" class="btn btn-primary btn-block btn-lg mt-2">회원가입</button>
+</form>
+<p class="text-center text-muted text-sm mt-2">이미 계정이 있으신가요? <a href="/auth/login">로그인</a></p>
+</div>
+</div>
+{% endblock %}

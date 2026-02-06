@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}{{ event.title }} - 관리{% endblock %}
+{% block content %}
+<div class="container" style="padding:24px 16px 40px">
+<div class="flex justify-between items-center mb-4" style="flex-wrap:wrap;gap:12px">
+<div>
+<div class="flex items-center gap-2">
+<h1 style="font-size:22px;font-weight:700">{{ event.title or '제목 없음' }}</h1>
+<span class="badge {% if event.status == '진행중' %}badge-success{% elif event.status == '종료' %}badge-danger{% else %}badge-gray{% endif %}">{{ event.status }}</span>
+</div>
+<p class="text-sm text-muted mt-2">참가 코드: <strong style="color:var(--primary-light);font-size:18px;letter-spacing:2px">{{ event.code }}</strong></p>
+</div>
+<div class="flex gap-2" style="flex-wrap:wrap">
+<a href="/event/host/{{ event.id }}" class="btn btn-primary" target="_blank"><i class="ri-slideshow-line"></i> 호스트 화면</a>
+<a href="/event/monitor/{{ event.id }}" class="btn btn-outline" target="_blank"><i class="ri-tv-line"></i> 모니터</a>
+<a href="/dashboard/event/{{ event.id }}/edit" class="btn btn-outline"><i class="ri-edit-line"></i> 수정</a>
+<a href="/dashboard/event/{{ event.id }}/result" class="btn btn-outline"><i class="ri-bar-chart-line"></i> 결과</a>
+</div>
+</div>
+
+<div class="grid" style="grid-template-columns:1fr 1fr;gap:16px">
+<div class="card"><div class="stat"><div class="stat-value">{{ participants|length }}</div><div class="stat-label">참가자</div></div></div>
+<div class="card"><div class="stat"><div class="stat-value">{{ teams|length }}</div><div class="stat-label">팀</div></div></div>
+</div>
+
+<div class="tabs">
+<div class="tab active" onclick="switchTab('participants')">참가자 ({{ participants|length }})</div>
+<div class="tab" onclick="switchTab('teams')">팀 ({{ teams|length }})</div>
+<div class="tab" onclick="switchTab('games')">게임 ({{ games|length }})</div>
+<div class="tab" onclick="switchTab('settings')">설정</div>
+</div>
+
+<!-- Participants -->
+<div id="tab-participants" class="tab-content active">
+<div class="card">
+<table>
+<thead><tr><th>#</th><th>이름</th><th>팀</th><th>점수</th><th>상태</th><th></th></tr></thead>
+<tbody>
+{% for p in participants %}
+<tr>
+<td>{{ p.code }}</td>
+<td>{{ p.name }}</td>
+<td>{{ p.team_name or '-' }}</td>
+<td>{{ p.score }}</td>
+<td><span class="badge {% if p.status == '참가' %}badge-success{% else %}badge-gray{% endif %}">{{ p.status }}</span></td>
+<td>
+<button class="btn btn-sm btn-outline" onclick="editParticipant({{ p.id }}, '{{ p.name }}', {{ p.score }}, {{ p.team_id or 'null' }})"><i class="ri-edit-line"></i></button>
+<button class="btn btn-sm btn-danger" onclick="deleteParticipant({{ p.id }})"><i class="ri-delete-bin-line"></i></button>
+</td>
+</tr>
+{% endfor %}
+{% if not participants %}<tr><td colspan="6" class="text-center text-muted">참가자가 없습니다</td></tr>{% endif %}
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Teams -->
+<div id="tab-teams" class="tab-content">
+<div class="card">
+<div class="flex justify-between items-center mb-4">
+<h3>팀 목록</h3>
+<button class="btn btn-sm btn-primary" onclick="createTeam()"><i class="ri-add-line"></i> 팀 추가</button>
+</div>
+{% for t in teams %}
+<div class="flex justify-between items-center p-2" style="border-bottom:1px solid var(--border)">
+<div>
+<strong>{{ t.name }}</strong>
+<span class="text-sm text-muted ml-2">점수: {{ t.score }}</span>
+</div>
+<div class="flex gap-2">
+<button class="btn btn-sm btn-outline" onclick="editTeam({{ t.id }},'{{ t.name }}')"><i class="ri-edit-line"></i></button>
+<button class="btn btn-sm btn-danger" onclick="deleteTeam({{ t.id }})"><i class="ri-delete-bin-line"></i></button>
+</div>
+</div>
+{% endfor %}
+{% if not teams %}<p class="text-muted text-center p-4">팀이 없습니다</p>{% endif %}
+</div>
+</div>
+
+<!-- Games -->
+<div id="tab-games" class="tab-content">
+<div class="card">
+<table>
+<thead><tr><th>게임</th><th>상태</th><th>시작</th><th>종료</th></tr></thead>
+<tbody>
+{% for gm in games %}
+<tr>
+<td>{{ gm.type }}</td>
+<td><span class="badge {% if gm.status == '진행중' %}badge-success{% elif gm.status == '종료' %}badge-danger{% else %}badge-gray{% endif %}">{{ gm.status }}</span></td>
+<td class="text-sm">{{ gm.started_at or '-' }}</td>
+<td class="text-sm">{{ gm.ended_at or '-' }}</td>
+</tr>
+{% endfor %}
+{% if not games %}<tr><td colspan="4" class="text-center text-muted">게임 기록이 없습니다</td></tr>{% endif %}
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Settings -->
+<div id="tab-settings" class="tab-content">
+<div class="card">
+<h3 class="mb-4">이벤트 설정</h3>
+<div class="form-group"><label>참가 코드</label>
+<div class="flex gap-2 items-center">
+<input type="text" value="{{ event.code }}" readonly style="flex:1;font-size:20px;letter-spacing:3px;text-align:center">
+<button class="btn btn-outline btn-sm" onclick="navigator.clipboard.writeText('{{ event.code }}');showToast('복사됨!')">복사</button>
+<button class="btn btn-outline btn-sm" onclick="navigator.clipboard.writeText(location.origin+'/join/{{ event.code }}');showToast('링크 복사됨!')">링크 복사</button>
+</div>
+</div>
+<div class="mt-4" style="border-top:1px solid var(--border);padding-top:16px">
+<form method="POST" action="/dashboard/event/{{ event.id }}/delete" onsubmit="return confirm('정말 삭제하시겠습니까?')">
+<button type="submit" class="btn btn-danger"><i class="ri-delete-bin-line"></i> 이벤트 삭제</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+const EVENT_ID = {{ event.id }};
+const TEAMS = {{ teams|tojson }};
+function switchTab(name) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-'+name).classList.add('active');
+    event.target.classList.add('active');
+}
+function createTeam() {
+    const name = prompt('팀 이름:');
+    if (name) fetchJSON(`/api/event/${EVENT_ID}/team`, {method:'POST', body:{name}}).then(() => location.reload());
+}
+function editTeam(id, name) {
+    const newName = prompt('팀 이름:', name);
+    if (newName) fetchJSON(`/api/event/${EVENT_ID}/team/${id}`, {method:'PUT', body:{name:newName}}).then(() => location.reload());
+}
+function deleteTeam(id) {
+    if (confirm('팀을 삭제하시겠습니까?')) fetchJSON(`/api/event/${EVENT_ID}/team/${id}`, {method:'DELETE'}).then(() => location.reload());
+}
+function editParticipant(id, name, score, teamId) {
+    const newScore = prompt('점수:', score);
+    if (newScore !== null) fetchJSON(`/api/event/${EVENT_ID}/participant/${id}`, {method:'PUT', body:{score:parseInt(newScore)}}).then(() => location.reload());
+}
+function deleteParticipant(id) {
+    if (confirm('참가자를 삭제하시겠습니까?')) fetchJSON(`/api/event/${EVENT_ID}/participant/${id}`, {method:'DELETE'}).then(() => location.reload());
+}
+</script>
+{% endblock %}

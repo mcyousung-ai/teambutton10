@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ '이벤트 수정' if event else '새 이벤트' }}{% endblock %}
+{% block content %}
+<div class="container" style="padding-top:24px;max-width:700px">
+<h1 style="font-size:24px;font-weight:700;margin-bottom:24px">{{ '이벤트 수정' if event else '새 이벤트 만들기' }}</h1>
+<form method="POST" class="card">
+<div class="form-group"><label>이벤트 제목 *</label><input type="text" name="title" value="{{ event.title if event else '' }}" required placeholder="예: 2024 하반기 워크샵"></div>
+<div class="form-row">
+<div class="form-group"><label>회사/기관명</label><input type="text" name="company_name" value="{{ event.company_name if event else '' }}" placeholder="예: THE TEAM COMPANY"></div>
+<div class="form-group"><label>장소</label><input type="text" name="location" value="{{ event.location if event else '' }}" placeholder="예: 서울 강남구"></div>
+</div>
+<div class="form-group"><label>설명</label><textarea name="description" placeholder="이벤트 설명을 입력하세요">{{ event.description if event else '' }}</textarea></div>
+<div class="form-row">
+<div class="form-group"><label>최대 참가자 수</label><input type="number" name="max_participants" value="{{ event.max_participants if event else 100 }}" min="1"></div>
+<div class="form-group"><label>팀 구성</label>
+<label style="display:flex;align-items:center;gap:8px;margin-top:8px;cursor:pointer">
+<input type="checkbox" name="has_teams" {% if event and event.has_teams %}checked{% endif %} style="width:auto"> 팀 나누기 사용
+</label>
+</div>
+</div>
+<div class="flex gap-2 mt-4">
+<button type="submit" class="btn btn-primary"><i class="ri-save-line"></i> {{ '수정' if event else '만들기' }}</button>
+<a href="/dashboard" class="btn btn-outline">취소</a>
+</div>
+</form>
+</div>
+{% endblock %}

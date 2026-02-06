@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block nav %}{% endblock %}
+{% block content %}
+<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%)">
+<div style="margin-bottom:40px">
+<i class="ri-team-fill" style="font-size:64px;color:var(--primary-light)"></i>
+<h1 style="font-size:42px;font-weight:800;margin:16px 0">THE TEAM COMPANY</h1>
+<p style="font-size:18px;color:var(--text2);max-width:500px;margin:0 auto">실시간 팀빌딩 플랫폼<br>퀴즈, 빙고, 부저, 추첨 등 다양한 게임으로<br>최고의 팀빌딩 경험을 제공합니다</p>
+</div>
+<div class="flex gap-4" style="flex-wrap:wrap;justify-content:center">
+<a href="/auth/login" class="btn btn-primary btn-lg"><i class="ri-login-box-line"></i> 로그인</a>
+<a href="/auth/register" class="btn btn-outline btn-lg"><i class="ri-user-add-line"></i> 회원가입</a>
+</div>
+<div style="margin-top:60px;display:flex;gap:40px;flex-wrap:wrap;justify-content:center">
+<div class="stat"><div class="stat-value"><i class="ri-gamepad-line"></i></div><div class="stat-label">게임 7종</div></div>
+<div class="stat"><div class="stat-value"><i class="ri-group-line"></i></div><div class="stat-label">10,000명+</div></div>
+<div class="stat"><div class="stat-value"><i class="ri-wifi-line"></i></div><div class="stat-label">실시간</div></div>
+<div class="stat"><div class="stat-value"><i class="ri-chat-smile-2-line"></i></div><div class="stat-label">채팅</div></div>
+</div>
+<div style="margin-top:40px">
+<p style="color:var(--text3);font-size:14px">참가자인가요? 호스트에게 코드를 받아 아래에 입력하세요</p>
+<form action="/join/code" method="GET" style="margin-top:12px;display:flex;gap:8px;max-width:300px;margin:12px auto 0">
+<input type="text" id="joinCode" placeholder="이벤트 코드 입력" style="flex:1;text-align:center;font-size:16px;letter-spacing:2px">
+<button type="button" onclick="goJoin()" class="btn btn-primary">참가</button>
+</form>
+</div>
+</div>
+<script>
+function goJoin(){const c=document.getElementById('joinCode').value.trim();if(c)window.location.href='/join/'+c;else alert('코드를 입력하세요.');}
+document.getElementById('joinCode').addEventListener('keypress',e=>{if(e.key==='Enter')goJoin();});
+</script>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block nav %}{% endblock %}
+{% block title %}{{ event.title }}{% endblock %}
+{% block content %}
+<div style="max-width:500px;margin:0 auto;padding:16px;min-height:100vh">
+<div class="text-center mb-4"><h2>{{ event.title }}</h2><p class="text-muted">{{ participant.name }} {% if participant.team_name %}({{ participant.team_name }}){% endif %}</p><span class="badge badge-gray" id="evStatus">{{ event.status }}</span><div class="mt-2 text-sm">내 점수: <strong class="text-primary" style="font-size:20px" id="myScore">{{ participant.score }}</strong></div></div>
+<!-- Game Area -->
+<div id="gameArea"><div class="card text-center"><p class="text-muted">게임을 기다리는 중...</p></div></div>
+<!-- Like -->
+<div id="likeArea" class="{% if not event.like_active %}hidden{% endif %}" style="position:fixed;bottom:80px;right:20px"><button class="btn btn-danger" onclick="doLike()" style="border-radius:50%;width:56px;height:56px;font-size:24px">❤️</button></div>
+<!-- Chat -->
+<div id="chatArea" class="{% if not event.chat_active %}hidden{% endif %}" style="position:fixed;bottom:0;left:0;right:0;max-width:500px;margin:0 auto">
+<div id="chatToggleBtn" style="text-align:right;padding:4px 16px"><button class="btn btn-sm btn-outline" onclick="toggleChat()">💬 채팅</button></div>
+<div id="chatPanel" class="hidden" style="background:var(--bg2);border-top:1px solid var(--border)">
+<div id="pChatMsgs" style="height:200px;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:4px"></div>
+<div class="chat-input"><input type="text" id="pChatIn" placeholder="메시지..." onkeypress="if(event.key==='Enter')pSendChat()"><button class="btn btn-sm btn-primary" onclick="pSendChat()">전송</button></div>
+</div>
+</div>
+</div>
+<script>
+const E={{ event.id }},PID={{ participant.id }},PNAME='{{ participant.name }}',TID={{ participant.team_id or 'null' }};
+const S=io();S.emit('participant:join',{eventId:E,participantId:PID});
+let currentGame=null;
+
+S.on('event:started',()=>{$('evStatus').textContent='진행중';$('evStatus').className='badge badge-success';});
+S.on('event:ended',()=>{$('evStatus').textContent='종료';$('evStatus').className='badge badge-danger';$('gameArea').innerHTML='<div class="card text-center"><h2>이벤트 종료</h2></div>';});
+S.on('event:updated',d=>{if(d.like_active!==undefined)$('likeArea').classList.toggle('hidden',!d.like_active);if(d.chat_active!==undefined)$('chatArea').classList.toggle('hidden',!d.chat_active);});
+S.on('event:like_updated',d=>{});
+S.on('event:kick',d=>{if(d.participantId==PID){alert('호스트에 의해 퇴장되었습니다.');location.href='/';}});
+S.on('participants:updated',d=>{const me=d.participants.find(p=>p.id==PID);if(me)$('myScore').textContent=me.score;});
+S.on('chat:message',d=>addPChat(d));
+
+// Game events
+S.on('game:prepared',d=>{currentGame=d;showGameUI(d);});
+S.on('game:started',d=>{currentGame=d;showGameUI(d);});
+S.on('game:ended',d=>{currentGame=null;$('gameArea').innerHTML='<div class="card text-center"><h2>'+d.type+' 종료!</h2></div>';});
+S.on('game:buzzer_count_click',d=>{if(d.participantId==PID){const el=$('myClicks');if(el)el.textContent=d.clicks;}});
+S.on('game:buzzer_count_winner',d=>{$('gameArea').innerHTML='<div class="card text-center"><h2>🏆 우승!</h2><p style="font-size:24px;font-weight:700;color:var(--primary-light)">'+d.winner.name+'</p><p>'+d.winner.clicks+' 클릭</p></div>';});
+S.on('game:code_number_next',d=>{const el=$('cnNumber');if(el)el.textContent=d.number;currentNumber=d.number;});
+S.on('game:bingo_turn_update',d=>{correctItems=d.correctItems||[];updateBingoBoard();const el=$('bingoTurn');if(el)el.textContent=d.playerTurn==PID?'🟢 내 차례!':'상대 차례';});
+S.on('game:answers_revealed',d=>{const r=d.responses.find(x=>x.participantId==PID);if(r){$('gameArea').innerHTML='<div class="card text-center"><h2>'+(r.isCorrect?'✅ 정답!':'❌ 오답')+'</h2>'+(r.isCorrect?'<p class="text-success" style="font-size:24px;font-weight:700">+'+r.earnedPoints+'점</p>':'')+'</div>';}});
+S.on('game:lottery_result',d=>{$('gameArea').innerHTML='<div class="card text-center"><h2>🎉 추첨 결과</h2><p style="font-size:24px;font-weight:700;color:var(--primary-light)">'+d.winners.join(', ')+'</p></div>';});
+S.on('timer:started',d=>{showTimer(d.timeLimit);});
+S.on('timer:tick',d=>{const el=$('timerVal');if(el){const m=Math.floor(d.remaining/60),s=d.remaining%60;el.textContent=m+':'+String(s).padStart(2,'0');if(d.remaining<=10)el.style.color='var(--danger)';}});
+S.on('timer:ended',()=>{const el=$('timerVal');if(el)el.textContent='종료!';});
+
+function $(id){return document.getElementById(id)}
+let correctItems=[],bingoBoard=[],currentNumber=null;
+
+function showGameUI(d){
+const t=d.type,s=d.settings||{};let h='';
+if(t==='퀴즈'){
+h='<div class="card"><h3>'+(s.quiz?.question||'문제')+'</h3><div class="mt-4">';
+(s.quiz?.options||[]).forEach((o,i)=>{h+='<div class="quiz-option" data-i="'+i+'" onclick="selectOption(this,'+i+')"><span style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">'+(i+1)+'</span><span>'+o+'</span></div>';});
+h+='</div><button class="btn btn-primary btn-block mt-4" onclick="submitQuiz()">제출</button></div>';
+} else if(t==='주관식퀴즈'){
+h='<div class="card"><h3>'+(s.quiz?.question||'문제')+'</h3><textarea id="subjAnswer" class="mt-4" placeholder="답을 입력하세요"></textarea><button class="btn btn-primary btn-block mt-2" onclick="submitSubj()">제출</button></div>';
+} else if(t==='부저'){
+h='<div class="card text-center"><h3>부저</h3><button class="buzzer-btn mt-4" onclick="submitBuzzer()">BUZZ!</button></div>';
+} else if(t==='부저카운트'){
+h='<div class="card text-center"><h3>부저카운트</h3><p class="text-muted">목표: '+(s.buzzerCount?.targetClicks||100)+' 클릭</p><div id="myClicks" style="font-size:48px;font-weight:800;color:var(--primary-light);margin:16px 0">0</div><button class="buzzer-btn" onclick="buzzerClick()" style="width:180px;height:180px;font-size:36px">CLICK!</button></div>';
+} else if(t==='빙고'){
+const size=s.bingo?.size||5;bingoBoard=[];
+h='<div class="card"><h3>빙고 <span id="bingoTurn" class="text-sm text-muted"></span></h3><div class="bingo-grid mt-4" id="bingoGrid" style="grid-template-columns:repeat('+size+',1fr)">';
+for(let i=0;i<size*size;i++){bingoBoard.push(s.bingo?.type==='숫자빙고'?(i+1).toString():'');h+='<div class="bingo-cell" data-i="'+i+'" onclick="bingoClick('+i+')">'+(s.bingo?.type==='숫자빙고'?(i+1):'')+'</div>';}
+h+='</div></div>';
+} else if(t==='코드넘버'){
+const bs=s.codeNumber?.boardSize||9;
+h='<div class="card"><h3>코드넘버</h3><div id="cnNumber" style="font-size:48px;font-weight:800;text-align:center;color:var(--primary-light);margin:8px 0">-</div><div class="code-number-board mt-2" id="cnBoard" style="grid-template-columns:repeat('+Math.ceil(Math.sqrt(bs))+',1fr)">';
+for(let i=0;i<bs;i++)h+='<div class="code-number-cell" data-i="'+i+'" onclick="cnPlace('+i+')"></div>';
+h+='</div></div>';
+} else if(t==='추첨'){
+h='<div class="card text-center"><h2>🎁 추첨</h2><p class="text-muted mt-2">결과를 기다리는 중...</p></div>';
+} else if(t==='타이머'){
+showTimer(s.timeLimit||60);return;
+} else {
+h='<div class="card text-center"><h3>'+t+'</h3><p class="text-muted">게임 진행 중...</p></div>';
+}
+$('gameArea').innerHTML=h;
+}
+
+function showTimer(tl){$('gameArea').innerHTML='<div class="card text-center"><h3>⏱️ 타이머</h3><div id="timerVal" style="font-size:72px;font-weight:800;color:var(--primary-light);margin:16px 0">'+Math.floor(tl/60)+':'+String(tl%60).padStart(2,'0')+'</div></div>';}
+
+let selectedOption=null;
+function selectOption(el,i){document.querySelectorAll('.quiz-option').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');selectedOption=i;}
+function submitQuiz(){if(selectedOption===null)return showToast('보기를 선택하세요','error');S.emit('game:submit_answer',{gameId:currentGame.gameId,participantId:PID,answer:selectedOption});showToast('제출 완료!');$('gameArea').innerHTML='<div class="card text-center"><h2>✅ 제출 완료</h2><p class="text-muted">결과를 기다리는 중...</p></div>';}
+function submitSubj(){const a=$('subjAnswer')?.value;if(!a)return;S.emit('game:submit_answer',{gameId:currentGame.gameId,participantId:PID,answer:a});showToast('제출 완료!');$('gameArea').innerHTML='<div class="card text-center"><h2>✅ 제출 완료</h2></div>';}
+function submitBuzzer(){S.emit('game:submit_answer',{gameId:currentGame.gameId,participantId:PID,answer:'buzz',timestamp:new Date().toISOString()});showToast('BUZZ!');$('gameArea').innerHTML='<div class="card text-center"><h2>🔔 BUZZ!</h2></div>';}
+function buzzerClick(){S.emit('game:buzzer_count_click',{gameId:currentGame.gameId,participantId:PID,eventId:E});}
+function bingoClick(i){if(!currentGame)return;const word=bingoBoard[i]||prompt('단어:');if(!word)return;bingoBoard[i]=word;S.emit('game:bingo_turn',{gameId:currentGame.gameId,participantId:PID,answer:word});updateBingoBoard();}
+function updateBingoBoard(){document.querySelectorAll('.bingo-cell').forEach((el,i)=>{el.textContent=bingoBoard[i]||'';el.classList.toggle('correct',correctItems.includes(bingoBoard[i]));});}
+function cnPlace(pos){if(!currentGame)return;S.emit('game:code_number_place',{gameId:currentGame.gameId,participantId:PID,position:pos,eventId:E});const el=document.querySelectorAll('.code-number-cell')[pos];if(el&&currentNumber){el.textContent=currentNumber;el.classList.add('filled');}}
+
+// Like
+function doLike(){S.emit('event:like',{eventId:E,participantId:PID});const h=document.createElement('div');h.className='like-float';h.textContent='❤️';h.style.cssText='left:'+Math.random()*80+'%;bottom:100px;font-size:24px;';document.body.appendChild(h);setTimeout(()=>h.remove(),1500);}
+
+// Chat
+function toggleChat(){$('chatPanel').classList.toggle('hidden');}
+function pSendChat(){const i=$('pChatIn');if(!i.value.trim())return;S.emit('chat:send',{eventId:E,message:i.value,senderId:PID,senderName:PNAME,type:'all',author:'normal',anonymous:false});i.value='';}
+function addPChat(d){const el=$('pChatMsgs');if(!el)return;const div=document.createElement('div');div.className='chat-msg '+(d.senderId==PID?'mine':'other');div.innerHTML='<div class="sender">'+(d.senderName||'')+'</div>'+d.message;el.appendChild(div);el.scrollTop=el.scrollHeight;}
+
+// Request current game state
+S.emit('game:get_current',{eventId:E});
+S.on('game:current',d=>{if(d&&d.status==='진행중'){currentGame=d;showGameUI(d);}});
+</script>
+{% endblock %}
